@@ -1,4 +1,5 @@
 'use client'
+
 import React from 'react'
 
 import { Category } from '../../../../payload/payload-types'
@@ -9,11 +10,11 @@ import { useFilter } from '../../../_providers/Filter'
 
 import classes from './index.module.scss'
 
-const Filters = ({ categories }: { categories: Category[]}) => {
+const Filters = ({ categories }: { categories: Category[] }) => {
   const { categoryFilters, sort, setCategoryFilters, setSort } = useFilter()
 
   const handleCategories = (categoryId: string) => {
-    if(categoryFilters.includes(categoryId)) {
+    if (categoryFilters.includes(categoryId)) {
       const updatedCategories = categoryFilters.filter(id => id !== categoryId)
 
       setCategoryFilters(updatedCategories)
@@ -23,6 +24,7 @@ const Filters = ({ categories }: { categories: Category[]}) => {
   }
 
   const handleSort = (value: string) => setSort(value)
+
   return (
     <div className={classes.filters}>
       <div>
@@ -42,7 +44,7 @@ const Filters = ({ categories }: { categories: Category[]}) => {
             )
           })}
         </div>
-        <HR className={classes.hr}/>
+        <HR className={classes.hr} />
         <h6 className={classes.title}>Sort By</h6>
         <div className={classes.categories}>
           <RadioButton

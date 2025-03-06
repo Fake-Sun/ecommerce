@@ -67,14 +67,14 @@ export const CartProvider = props => {
           const initialCart = await Promise.all(
             parsedCart.items.map(async ({ product, quantity }) => {
               const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${product}`
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${product}`,
               )
               const data = await res.json()
               return {
                 product: data,
                 quantity,
               }
-            })
+            }),
           )
 
           dispatchCart({
@@ -145,35 +145,43 @@ export const CartProvider = props => {
     const flattenedCart = {
       ...cart,
       items: cart?.items
-        ?.map(item =>
-          item?.product && typeof item?.product === 'object'
-            ? {
-          ...item,
-          product: item?.product?.id,
-                quantity: typeof item?.quantity === 'number' ? item?.quantity : 0,
-        } : null)
+        ?.map(item => {
+          if (item?.product && typeof item?.product === 'object') {
+            return {
+              ...item,
+              product: item?.product?.id,
+              quantity: typeof item?.quantity === 'number' ? item?.quantity : 0,
+            }
+          }
+          return null
+        })
         .filter(Boolean) as CartItem[],
     }
 
     syncCartToPayload(user, flattenedCart)
     setHasInitialized(true)
-  }, [user, cart])
+  }, [user, cart, syncCartToPayload])
 
   // ✅ Check if a product is in the cart
   const isProductInCart = useCallback(
     (incomingProduct: Product): boolean => {
       const { items: itemsInCart } = cart || {}
-      return Array.isArray(itemsInCart) && itemsInCart.some(({ product }) =>
-        typeof product === 'string'
-          ? product === incomingProduct.id
-          : product?.id === incomingProduct.id
+
+      return (
+        Array.isArray(itemsInCart) &&
+        itemsInCart.some(({ product }) => {
+          if (typeof product === 'string') {
+            return product === incomingProduct.id
+          }
+          return product?.id === incomingProduct.id
+        })
       )
     },
-    [cart]
+    [cart],
   )
 
   // ✅ Add item to cart
-  const addItemToCart = useCallback((incomingItem) => {
+  const addItemToCart = useCallback(incomingItem => {
     dispatchCart({
       type: 'ADD_ITEM',
       payload: incomingItem,
