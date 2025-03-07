@@ -10,33 +10,6 @@ const nextConfig = {
       .filter(Boolean)
       .map(url => url.replace(/https?:\/\//, '')),
   },
-  async headers() {
-    const headers = [];
-
-    if (!process.env.NEXT_PUBLIC_IS_LIVE) {
-      headers.push({
-        headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex',
-          },
-        ],
-        source: '/:path*',
-      });
-    }
-
-    headers.push({
-      source: '/(.*)',
-      headers: [
-        {
-          key: 'Content-Security-Policy',
-          value: ContentSecurityPolicy,
-        },
-      ],
-    });
-
-    return headers;
-  },
 };
 
 module.exports = nextConfig;
