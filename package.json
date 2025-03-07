@@ -22,6 +22,7 @@
     "payload": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts payload"
   },
   "dependencies": {
+    "@cloudflare/next-on-pages": "^1.13.9",
     "@payloadcms/bundler-webpack": "^1.0.0",
     "@payloadcms/db-mongodb": "^1.0.0",
     "@payloadcms/plugin-cloud": "^3.0.0",
