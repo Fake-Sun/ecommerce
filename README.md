@@ -13,6 +13,6 @@ This project is a full-stack e-commerce application built using the MERN stack (
 - **Responsive Design**: Optimized for various devices to ensure a seamless user experience.
 
 
-#Deployment
+# Deployment
 
 NPM Run Dev
