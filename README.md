@@ -11,3 +11,8 @@ This project is a full-stack e-commerce application built using the MERN stack (
 - **Stripe Integration**: Seamless payment processing with Stripe.
 - **Content Management**: Utilize Payload CMS to manage website content efficiently.
 - **Responsive Design**: Optimized for various devices to ensure a seamless user experience.
+
+
+#Deployment
+
+NPM Run Dev
