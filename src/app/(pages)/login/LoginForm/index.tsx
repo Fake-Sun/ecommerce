@@ -21,7 +21,7 @@ const LoginForm: React.FC = () => {
   const searchParams = useSearchParams()
   const allParams = searchParams.toString() ? `?${searchParams.toString()}` : ''
   const redirect = useRef(searchParams.get('redirect'))
-  const { login } = useAuth()
+  const { login, setUser } = useAuth()
   const router = useRouter()
   const [error, setError] = React.useState<string | null>(null)
 
@@ -34,7 +34,8 @@ const LoginForm: React.FC = () => {
   const onSubmit = useCallback(
     async (data: FormData) => {
       try {
-        await login(data)
+        const user = await login(data)
+        setUser(user)
         if (redirect?.current) router.push(redirect.current as string)
         else router.push('/')
         window.location.href = '/'
@@ -42,7 +43,7 @@ const LoginForm: React.FC = () => {
         setError('There was an error with the credentials provided. Please try again.')
       }
     },
-    [login, router],
+    [login, setUser, router],
   )
 
   return (
