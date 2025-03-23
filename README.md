@@ -15,4 +15,5 @@ This project is a full-stack e-commerce application built using the MERN stack (
 
 ## Deployment
 
-NPM Run Dev
+yarn install
+yarn run dev
