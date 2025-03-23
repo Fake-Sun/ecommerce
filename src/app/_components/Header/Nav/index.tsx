@@ -12,14 +12,17 @@ import { CMSLink } from '../../Link'
 import classes from './index.module.scss'
 
 export const HeaderNav: React.FC<{ header: HeaderType }> = ({ header }) => {
-  const navItems = header?.navItems || []
   const { user } = useAuth()
+
+  if (!header || !header.navItems) return null
+
+  const navItems = header.navItems
 
   return (
     <nav className={[classes.nav, user === undefined && classes.hide].filter(Boolean).join(' ')}>
-      {navItems.map(({ link }, i) => {
-        return <CMSLink key={i} {...link} appearance="none" />
-      })}
+      {navItems.map(({ link }, i) => (
+        <CMSLink key={i} {...link} appearance="none" />
+      ))}
       <CartLink />
       {user && <Link href="/account">Account</Link>}
       {!user && (

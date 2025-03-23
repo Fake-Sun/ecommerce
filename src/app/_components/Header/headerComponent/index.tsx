@@ -12,8 +12,10 @@ import { HeaderNav } from '../Nav'
 
 import classes from './index.module.scss'
 
-const HeaderComponent = ({ header }: { header: Header }) => {
+export const HeaderComponent = ({ header }: { header: Header }) => {
   const pathname = usePathname()
+
+  if (!header || !header.navItems) return null
 
   return (
     <nav
@@ -31,5 +33,3 @@ const HeaderComponent = ({ header }: { header: Header }) => {
     </nav>
   )
 }
-
-export default HeaderComponent
