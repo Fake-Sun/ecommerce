@@ -1,25 +1,37 @@
-FROM node:18-slim
+FROM node:18-slim as base
 
-# Set working directory
-WORKDIR /app
+# Builder
+FROM base as builder
 
-# Install OS deps for native modules
+WORKDIR /home/node/app
+
+# OS deps for native modules like sharp, bcrypt
 RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 
-# Copy everything
+COPY package.json yarn.lock .yarnrc.yml ./
+
+# Install dependencies
+RUN yarn install --immutable
+
 COPY . .
 
-# Install deps (avoid optional)
-RUN yarn install --frozen-lockfile --ignore-optional
-
-# Build app
 RUN yarn build
 
-# Set environment
+# Runtime
+FROM base as runtime
+
+WORKDIR /home/node/app
+
 ENV NODE_ENV=production
 ENV PAYLOAD_CONFIG_PATH=dist/payload.config.js
 
+COPY package.json yarn.lock .yarnrc.yml ./
+
+RUN yarn install --immutable
+
+COPY --from=builder /home/node/app/dist ./dist
+COPY --from=builder /home/node/app/build ./build
+
 EXPOSE 3000
 
-# Start server
 CMD ["node", "dist/server.js"]
