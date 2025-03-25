@@ -17,7 +17,6 @@
   COPY package.json yarn.lock ./
   COPY .yarn/ .yarn/
   COPY .yarnrc.yml ./
-  COPY media ./media
   COPY . .
 
   RUN corepack enable
