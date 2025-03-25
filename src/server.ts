@@ -7,9 +7,9 @@ import payload from 'payload'
 
 import { seed } from './payload/seed'
 
-dotenv.config({
-  path: path.resolve(__dirname, '../.env'),
-})
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({ path: path.resolve(__dirname, '../.env') })
+}
 
 const app = express()
 const PORT = process.env.PORT || 3000
