@@ -83,6 +83,8 @@ const serialize = (children?: Children): React.ReactNode[] =>
       case 'li':
         return <li key={i}>{serialize(node.children)}</li>
       case 'link':
+        if (!node.url) return null
+
         return (
           <CMSLink
             key={i}
