@@ -55,6 +55,7 @@ const CartItem = ({ product, title, metaImage, qty, addItemToCart }) => {
               width={24}
               height={24}
               className={classes.qtnBtn}
+              style={{ height: 'auto' }} // ✅ added
             />
           </div>
 
@@ -74,6 +75,7 @@ const CartItem = ({ product, title, metaImage, qty, addItemToCart }) => {
               width={24}
               height={24}
               className={classes.qtnBtn}
+              style={{ height: 'auto' }} // ✅ added
             />
           </div>
         </div>

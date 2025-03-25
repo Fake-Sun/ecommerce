@@ -18,10 +18,11 @@ type FormData = {
 
 export const ResetPasswordForm: React.FC = () => {
   const [error, setError] = useState('')
+  const [token, setToken] = useState<string | null>(null)
+
   const { login } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const token = searchParams.get('token')
 
   const {
     register,
@@ -45,11 +46,7 @@ export const ResetPasswordForm: React.FC = () => {
 
       if (response.ok) {
         const json = await response.json()
-
-        // Automatically log the user in after they successfully reset password
         await login({ email: json.user.email, password: data.password })
-
-        // Redirect them to `/account` with success message in URL
         router.push('/account?success=Password reset successfully.')
       } else {
         setError('There was a problem while resetting your password. Please try again later.')
@@ -58,11 +55,11 @@ export const ResetPasswordForm: React.FC = () => {
     [router, login],
   )
 
-  // when Next.js populates token within router,
-  // reset form with new token value
   useEffect(() => {
-    reset({ token: token || undefined })
-  }, [reset, token])
+    const paramToken = searchParams.get('token')
+    setToken(paramToken)
+    reset({ token: paramToken || undefined })
+  }, [searchParams, reset])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
@@ -75,7 +72,7 @@ export const ResetPasswordForm: React.FC = () => {
         register={register}
         error={errors.password}
       />
-      <input type="hidden" {...register('token')} />
+      <input type="hidden" {...register('token')} value={token || ''} />
       <Button
         type="submit"
         appearance="primary"

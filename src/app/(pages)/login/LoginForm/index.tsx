@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -18,12 +18,21 @@ type FormData = {
 }
 
 const LoginForm: React.FC = () => {
-  const searchParams = useSearchParams()
-  const allParams = searchParams.toString() ? `?${searchParams.toString()}` : ''
-  const redirect = useRef(searchParams.get('redirect'))
-  const { login, setUser } = useAuth()
   const router = useRouter()
-  const [error, setError] = React.useState<string | null>(null)
+  const { login, setUser } = useAuth()
+  const [error, setError] = useState<string | null>(null)
+
+  // ✅ Wrap searchParams to avoid hydration issues
+  const searchParamsHook = useSearchParams()
+  const [searchParams, setSearchParams] = useState<URLSearchParams>()
+  const redirect = useRef<string | null>(null)
+
+  useEffect(() => {
+    setSearchParams(searchParamsHook)
+    redirect.current = searchParamsHook.get('redirect')
+  }, [searchParamsHook])
+
+  const allParams = searchParams?.toString() ? `?${searchParams.toString()}` : ''
 
   const {
     register,
@@ -36,7 +45,7 @@ const LoginForm: React.FC = () => {
       try {
         const user = await login(data)
         setUser(user)
-        if (redirect?.current) router.push(redirect.current as string)
+        if (redirect?.current) router.push(redirect.current)
         else router.push('/')
         window.location.href = '/'
       } catch (_) {

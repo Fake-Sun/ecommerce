@@ -11,6 +11,8 @@ import LoginForm from './LoginForm'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Login() {
   await getMeUser({
     validUserRedirect: `/account?warning=${encodeURIComponent('You are already logged in.')}`,
@@ -26,6 +28,7 @@ export default async function Login() {
             width={250}
             height={23}
             className={classes.logo}
+            style={{ height: 'auto' }} // ✅ add this
           />
         </Link>
       </div>
@@ -34,7 +37,13 @@ export default async function Login() {
           <RenderParams className={classes.params} />
           <div className={classes.formTitle}>
             <h3>Welcome</h3>
-            <Image src="/assets/icons/hand.png" alt="hand" width={30} height={30} />
+            <Image
+              src="/assets/icons/hand.png"
+              alt="hand"
+              width={30}
+              height={30}
+              style={{ height: 'auto' }} // ✅ or style={{ width: 'auto' }}
+            />
           </div>
           <p>Please login here</p>
           <LoginForm />

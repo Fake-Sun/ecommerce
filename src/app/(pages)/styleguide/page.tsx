@@ -6,6 +6,8 @@ import { Gutter } from '../../_components/Gutter'
 import { VerticalPadding } from '../../_components/VerticalPadding'
 import { mergeOpenGraph } from '../../_utilities/mergeOpenGraph'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Typography() {
   return (
     <Gutter>

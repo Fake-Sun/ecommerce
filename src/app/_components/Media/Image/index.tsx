@@ -43,7 +43,7 @@ export const Image: React.FC<MediaProps> = props => {
 
     const filename = fullFilename
 
-    src = `${process.env.NEXT_PUBLIC_SERVER_URL}/media/${filename}`
+    src = `/media/${filename}`
   }
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
@@ -53,6 +53,7 @@ export const Image: React.FC<MediaProps> = props => {
 
   return (
     <NextImage
+      unoptimized
       className={[isLoading && classes.placeholder, classes.image, imgClassName]
         .filter(Boolean)
         .join(' ')}

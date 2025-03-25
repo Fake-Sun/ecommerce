@@ -4,11 +4,25 @@ const redirects = require('./redirects')
 
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  output: 'standalone',
   images: {
-    domains: ['localhost', process.env.NEXT_PUBLIC_SERVER_URL]
-      .filter(Boolean)
-      .map(url => url.replace(/https?:\/\//, '')),
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/media/**',
+      },
+    ],
+  },
+  // 👇 Add this
+  async rewrites() {
+    return [
+      {
+        source: '/media/:path*',
+        destination: '/media/:path*',
+      },
+    ]
   },
 }
 

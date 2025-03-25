@@ -22,10 +22,9 @@ export async function GET(
   }
 
   if (!token) {
-    new Response('You are not allowed to preview this page', { status: 403 })
+    return new Response('You are not allowed to preview this page', { status: 403 })
   }
 
-  // validate the Payload token
   const userReq = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`, {
     headers: {
       Authorization: `JWT ${token}`,
@@ -34,8 +33,10 @@ export async function GET(
 
   const userRes = await userReq.json()
 
+  const dm = await draftMode()
+
   if (!userReq.ok || !userRes?.user) {
-    draftMode().disable()
+    dm.disable()
     return new Response('You are not allowed to preview this page', { status: 403 })
   }
 
@@ -43,7 +44,7 @@ export async function GET(
     return new Response('Invalid token', { status: 401 })
   }
 
-  draftMode().enable()
+  dm.enable()
 
   redirect(url)
 }

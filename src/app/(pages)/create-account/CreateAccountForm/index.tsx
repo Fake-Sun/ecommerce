@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState as useClientState, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -20,12 +20,20 @@ type FormData = {
 }
 
 const CreateAccountForm: React.FC = () => {
-  const searchParams = useSearchParams()
-  const allParams = searchParams.toString() ? `?${searchParams.toString()}` : ''
   const { login } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // ✅ Fix: useSearchParams wrapped inside useClientState to avoid hydration issue
+  const searchParamsHook = useSearchParams()
+  const [searchParams, setSearchParams] = useClientState<URLSearchParams>()
+
+  useEffect(() => {
+    setSearchParams(searchParamsHook)
+  }, [searchParamsHook])
+
+  const allParams = searchParams?.toString() ? `?${searchParams.toString()}` : ''
 
   const {
     register,
@@ -53,7 +61,7 @@ const CreateAccountForm: React.FC = () => {
         return
       }
 
-      const redirect = searchParams.get('redirect')
+      const redirect = searchParams?.get('redirect')
 
       const timer = setTimeout(() => {
         setLoading(true)
@@ -62,7 +70,7 @@ const CreateAccountForm: React.FC = () => {
       try {
         await login(data)
         clearTimeout(timer)
-        if (redirect) router.push(redirect as string)
+        if (redirect) router.push(redirect)
         else router.push('/')
         window.location.href = '/'
       } catch (_) {

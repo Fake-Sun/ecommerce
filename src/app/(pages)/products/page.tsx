@@ -12,7 +12,7 @@ import Filters from './Filters'
 import classes from './index.module.scss'
 
 const Products = async () => {
-  const { isEnabled: isDraftMode } = draftMode()
+  const { isEnabled: isDraftMode } = await draftMode()
 
   let page: Page | null = null
   let categories: Category[] | null = null

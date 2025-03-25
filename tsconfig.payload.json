@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "target": "ESNext",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "jsx": "react-jsx",             // ✅ Add this line
+    "types": ["node", "react"]      // ✅ Also add this for React types
+  },
+  "include": ["src/payload/payload.config.ts", "src/payload/**/*.tsx"]
+}

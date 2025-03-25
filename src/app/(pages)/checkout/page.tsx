@@ -12,6 +12,8 @@ import { CheckoutPage } from './CheckoutPage'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Checkout() {
   await getMeUser({
     nullUserRedirect: `/login?error=${encodeURIComponent(

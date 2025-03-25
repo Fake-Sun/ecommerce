@@ -10,6 +10,8 @@ import CreateAccountForm from './CreateAccountForm'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 export default async function CreateAccount() {
   await getMeUser({
     validUserRedirect: `/account?warning=${encodeURIComponent(

@@ -9,6 +9,8 @@ import { RecoverPasswordForm } from './RecoverPasswordForm'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 export default async function RecoverPassword() {
   return (
     <section className={classes.recoverPassword}>

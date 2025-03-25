@@ -11,12 +11,15 @@ import { PaywallBlocks } from '../../../_components/PaywallBlocks'
 import { ProductHero } from '../../../_heros/Product'
 import { generateMeta } from '../../../_utilities/generateMeta'
 
-// Force this page to be dynamic so that Next.js does not cache it
-// See the note in '../../../[slug]/page.tsx' about this
 export const dynamic = 'force-dynamic'
 
-export default async function Product({ params: { slug } }) {
-  const { isEnabled: isDraftMode } = draftMode()
+interface ProductPageProps {
+  params: Promise<{ slug: string }>
+}
+
+export default async function Product({ params }: ProductPageProps) {
+  const { slug } = await params
+  const { isEnabled: isDraftMode } = await draftMode()
 
   let product: Product | null = null
 
@@ -27,7 +30,7 @@ export default async function Product({ params: { slug } }) {
       draft: isDraftMode,
     })
   } catch (error) {
-    console.error(error) // eslint-disable-line no-console
+    console.error(error)
   }
 
   if (!product) {
@@ -39,7 +42,7 @@ export default async function Product({ params: { slug } }) {
   return (
     <>
       <ProductHero product={product} />
-      {product?.enablePaywall && <PaywallBlocks productSlug={slug as string} disableTopPadding />}
+      {product?.enablePaywall && <PaywallBlocks productSlug={slug} disableTopPadding />}
       <Blocks
         disableTopPadding
         blocks={[
@@ -50,11 +53,7 @@ export default async function Product({ params: { slug } }) {
             introContent: [
               {
                 type: 'h3',
-                children: [
-                  {
-                    text: 'Related Products',
-                  },
-                ],
+                children: [{ text: 'Related Products' }],
               },
             ],
             docs: relatedProducts,
@@ -68,24 +67,21 @@ export default async function Product({ params: { slug } }) {
 export async function generateStaticParams() {
   try {
     const products = await fetchDocs<ProductType>('products')
-    return products?.map(({ slug }) => slug)
+    return products?.map(({ slug }) => ({ slug }))
   } catch (error) {
     return []
   }
 }
 
-export async function generateMetadata({ params: { slug } }): Promise<Metadata> {
-  const { isEnabled: isDraftMode } = draftMode()
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
 
-  let product: Product | null = null
-
-  try {
-    product = await fetchDoc<Product>({
-      collection: 'products',
-      slug,
-      draft: isDraftMode,
-    })
-  } catch (error) {}
-
-  return generateMeta({ doc: product })
+  return {
+    title: `Product: ${slug}`,
+    description: `Details about product ${slug}`,
+  }
 }

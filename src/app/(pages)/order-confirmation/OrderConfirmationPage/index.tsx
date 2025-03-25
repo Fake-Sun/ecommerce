@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 import { Button } from '../../../_components/Button'
@@ -9,16 +9,18 @@ import { useCart } from '../../../_providers/Cart'
 
 import classes from './index.module.scss'
 
-export const OrderConfirmationPage: React.FC<{}> = () => {
-  const searchParams = useSearchParams()
-  const orderID = searchParams.get('order_id')
-  const error = searchParams.get('error')
+export const OrderConfirmationPage: React.FC = () => {
+  const searchParamsHook = useSearchParams()
+  const [orderID, setOrderID] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const { clearCart } = useCart()
 
   useEffect(() => {
+    setOrderID(searchParamsHook.get('order_id'))
+    setError(searchParamsHook.get('error'))
     clearCart()
-  }, [clearCart])
+  }, [searchParamsHook, clearCart])
 
   return (
     <div>
@@ -26,7 +28,8 @@ export const OrderConfirmationPage: React.FC<{}> = () => {
         <Fragment>
           <Message error={error} />
           <p>
-            {`Your payment was successful but there was an error processing your order. Please contact us to resolve this issue.`}
+            Your payment was successful but there was an error processing your order. Please contact
+            us to resolve this issue.
           </p>
           <div className={classes.actions}>
             <Button href="/account" label="View account" appearance="primary" />
@@ -41,7 +44,8 @@ export const OrderConfirmationPage: React.FC<{}> = () => {
         <Fragment>
           <h1>Thank you for your order!</h1>
           <p>
-            {`Your order has been confirmed. You will receive an email confirmation shortly. Your order ID is ${orderID}.`}
+            Your order has been confirmed. You will receive an email confirmation shortly.
+            {orderID}.
           </p>
           <div className={classes.actions}>
             <Button href={`/account/orders/${orderID}`} label="View order" appearance="primary" />

@@ -14,7 +14,7 @@ export const getMe = async (args?: {
 }> => {
   const { nullUserRedirect, userRedirect } = args || {}
   const cookieStore = cookies()
-  const token = cookieStore.get('payload-token')?.value
+  const token = (await cookieStore).get('payload-token')?.value
 
   const meUserReq = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
     method: 'POST',

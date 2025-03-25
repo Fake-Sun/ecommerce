@@ -1,9 +1,8 @@
 import React, { Fragment } from 'react'
 import { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { Order } from '../../../../payload/payload-types'
+import type { Order } from '../../../../payload/payload-types'
 import { Button } from '../../../_components/Button'
 import { Gutter } from '../../../_components/Gutter'
 import { HR } from '../../../_components/HR'
@@ -15,30 +14,30 @@ import { mergeOpenGraph } from '../../../_utilities/mergeOpenGraph'
 
 import classes from './index.module.scss'
 
-export default async function Order({ params: { id } }) {
+export const dynamic = 'force-dynamic'
+
+export default async function Order({ params }: { params: { id: string } }) {
   const { token } = await getMeUser({
     nullUserRedirect: `/login?error=${encodeURIComponent(
       'You must be logged in to view this order.',
-    )}&redirect=${encodeURIComponent(`/order/${id}`)}`,
+    )}&redirect=${encodeURIComponent(`/orders/${params.id}`)}`,
   })
 
   let order: Order | null = null
 
   try {
-    order = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${params.id}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `JWT ${token}`,
       },
-    })?.then(async res => {
-      if (!res.ok) notFound()
-      const json = await res.json()
-      if ('error' in json && json.error) notFound()
-      if ('errors' in json && json.errors) notFound()
-      return json
     })
-  } catch (error) {
-    console.error(error) // eslint-disable-line no-console
+
+    const json = await res.json()
+    if (!res.ok || json?.error || json?.errors) notFound()
+    order = json
+  } catch {
+    notFound()
   }
 
   if (!order) {
@@ -48,15 +47,14 @@ export default async function Order({ params: { id } }) {
   return (
     <Gutter className={classes.orders}>
       <h1>
-        {`Order`}
-        <span className={classes.id}>{`${order.id}`}</span>
+        Order <span className={classes.id}>{order.id}</span>
       </h1>
       <div className={classes.itemMeta}>
         <p>{`ID: ${order.id}`}</p>
         <p>{`Payment Intent: ${order.stripePaymentIntentID}`}</p>
         <p>{`Ordered On: ${formatDateTime(order.createdAt)}`}</p>
         <p className={classes.total}>
-          {'Total: '}
+          Total:{' '}
           {new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'usd',
@@ -68,20 +66,14 @@ export default async function Order({ params: { id } }) {
         <h4 className={classes.orderItems}>Items</h4>
         {order.items?.map((item, index) => {
           if (typeof item.product === 'object') {
-            const {
-              quantity,
-              product,
-              product: { id, title, meta, stripeProductID },
-            } = item
-
-            const isLast = index === (order?.items?.length || 0) - 1
-
-            const metaImage = meta?.image
+            const { quantity, product } = item
+            const isLast = index === (order.items?.length || 0) - 1
+            const metaImage = product.meta?.image
 
             return (
               <Fragment key={index}>
                 <div className={classes.row}>
-                  <Link href={`/products/${product.slug}`} className={classes.mediaWrapper}>
+                  <a href={`/products/${product.slug}`} className={classes.mediaWrapper}>
                     {!metaImage && <span className={classes.placeholder}>No image</span>}
                     {metaImage && typeof metaImage !== 'string' && (
                       <Media
@@ -91,23 +83,23 @@ export default async function Order({ params: { id } }) {
                         fill
                       />
                     )}
-                  </Link>
+                  </a>
                   <div className={classes.rowContent}>
-                    {!stripeProductID && (
+                    {!product.stripeProductID && (
                       <p className={classes.warning}>
-                        {'This product is not yet connected to Stripe. To link this product, '}
-                        <Link
-                          href={`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/collections/products/${id}`}
+                        This product is not yet connected to Stripe. To link this product,{' '}
+                        <a
+                          href={`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/collections/products/${product.id}`}
                         >
                           edit this product in the admin panel
-                        </Link>
-                        {'.'}
+                        </a>
+                        .
                       </p>
                     )}
                     <h5 className={classes.title}>
-                      <Link href={`/products/${product.slug}`} className={classes.titleLink}>
-                        {title}
-                      </Link>
+                      <a href={`/products/${product.slug}`} className={classes.titleLink}>
+                        {product.title}
+                      </a>
                     </h5>
                     <p>{`Quantity: ${quantity}`}</p>
                     <Price product={product} button={false} quantity={quantity} />
@@ -117,7 +109,6 @@ export default async function Order({ params: { id } }) {
               </Fragment>
             )
           }
-
           return null
         })}
       </div>
@@ -130,13 +121,13 @@ export default async function Order({ params: { id } }) {
   )
 }
 
-export async function generateMetadata({ params: { id } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   return {
-    title: `Order ${id}`,
-    description: `Order details for order ${id}.`,
+    title: `Order ${params.id}`,
+    description: `Order details for order ${params.id}.`,
     openGraph: mergeOpenGraph({
-      title: `Order ${id}`,
-      url: `/orders/${id}`,
+      title: `Order ${params.id}`,
+      url: `/orders/${params.id}`,
     }),
   }
 }

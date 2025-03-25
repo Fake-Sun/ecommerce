@@ -9,6 +9,8 @@ import { LogoutPage } from './LogoutPage'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Logout() {
   let settings: Settings | null = null
 

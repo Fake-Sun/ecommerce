@@ -12,7 +12,6 @@ export const ProductHero: React.FC<{
   product: Product
 }> = ({ product }) => {
   const { title, categories, meta: { image: metaImage, description } = {} } = product
-
   return (
     <Gutter className={classes.productHero}>
       <div className={classes.mediaWrapper}>

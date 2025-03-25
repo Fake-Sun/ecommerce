@@ -7,6 +7,8 @@ import { ResetPasswordForm } from './ResetPasswordForm'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 export default async function ResetPassword() {
   return (
     <Gutter className={classes.resetPassword}>

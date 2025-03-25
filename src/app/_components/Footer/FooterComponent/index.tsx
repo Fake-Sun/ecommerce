@@ -25,8 +25,9 @@ const FooterComponent = ({ footer }: { footer: Footer }) => {
               <Image
                 src={inclusion.icon}
                 alt={inclusion.title}
-                width={36}
-                height={36}
+                width={0}
+                height={0}
+                style={{ width: '36px', height: '36px' }}
                 className={classes.icon}
               />
 
@@ -54,13 +55,9 @@ const FooterComponent = ({ footer }: { footer: Footer }) => {
                     newTab={true}
                     className={classes.socialLinkItem}
                   >
-                    <Image
-                      src={icon.url}
-                      alt={item.link.label}
-                      width={24}
-                      height={24}
-                      className={classes.socialIcon}
-                    />
+                    {icon?.url && (
+                      <Image src={icon.url} alt={item.link.label} className={classes.socialIcon} />
+                    )}
                   </Button>
                 )
               })}

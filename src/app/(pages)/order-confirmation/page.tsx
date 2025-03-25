@@ -7,6 +7,8 @@ import { OrderConfirmationPage } from './OrderConfirmationPage'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 export default async function OrderConfirmation() {
   return (
     <Gutter className={classes.confirmationPage}>
