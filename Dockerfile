@@ -31,7 +31,7 @@
   RUN yarn generate:types
   
   # Then build everything
-  RUN yarn build --frozen-lockfile && yarn tsc
+  RUN yarn build && yarn tsc
   
   # ---------------------------
   # Runtime Image
