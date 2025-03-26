@@ -14,11 +14,11 @@ import { generateMeta } from '../../../_utilities/generateMeta'
 export const dynamic = 'force-dynamic'
 
 interface ProductPageProps {
-  params: Promise<{ slug: string }>
+  params: { slug: string }
 }
 
 export default async function Product({ params }: ProductPageProps) {
-  const { slug } = await params
+  const { slug } = params
   const { isEnabled: isDraftMode } = await draftMode()
 
   let product: Product | null = null
@@ -42,7 +42,7 @@ export default async function Product({ params }: ProductPageProps) {
   return (
     <>
       <ProductHero product={product} />
-      {product?.enablePaywall && <PaywallBlocks productSlug={slug} disableTopPadding />}
+      {product.enablePaywall && <PaywallBlocks productSlug={slug} disableTopPadding />}
       <Blocks
         disableTopPadding
         blocks={[
@@ -67,7 +67,7 @@ export default async function Product({ params }: ProductPageProps) {
 export async function generateStaticParams() {
   try {
     const products = await fetchDocs<ProductType>('products')
-    return products?.map(({ slug }) => ({ slug }))
+    return products?.map(({ slug }) => ({ slug })) || []
   } catch (error) {
     return []
   }
@@ -76,12 +76,29 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: { slug: string }
 }): Promise<Metadata> {
-  const { slug } = await params
+  const { slug } = params
+  const { isEnabled: isDraftMode } = await draftMode()
 
-  return {
-    title: `Product: ${slug}`,
-    description: `Details about product ${slug}`,
+  let product: Product | null = null
+
+  try {
+    product = await fetchDoc<Product>({
+      collection: 'products',
+      slug,
+      draft: isDraftMode,
+    })
+  } catch (error) {
+    console.error(error)
   }
+
+  if (!product) {
+    return {
+      title: `Product Not Found`,
+      description: `The requested product does not exist.`,
+    }
+  }
+
+  return generateMeta({ doc: product })
 }
