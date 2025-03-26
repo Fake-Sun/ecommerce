@@ -30,7 +30,7 @@
   ENV PAYLOAD_BUILD=true
 
   # Then build
-  RUN yarn build --frozen-lockfile && yarn tsc
+  RUN yarn build && yarn tsc
   # ---------------------------
   # Runtime Image
   # ---------------------------
