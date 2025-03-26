@@ -11,6 +11,8 @@ import Filters from './Filters'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 const Products = async () => {
   const { isEnabled: isDraftMode } = await draftMode()
 
@@ -29,11 +31,15 @@ const Products = async () => {
     console.log(error)
   }
 
+  if (!page) {
+    return null // or notFound(), or a fallback UI
+  }
+
   return (
     <div className={classes.container}>
       <Gutter className={classes.products}>
         <Filters categories={categories} />
-        <Blocks blocks={page.layout} disableTopPadding={true} />
+        <Blocks blocks={page.layout || []} disableTopPadding={true} />
       </Gutter>
       <HR />
     </div>
