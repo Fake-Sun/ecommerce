@@ -26,9 +26,11 @@
   RUN yarn generate:graphQLSchema
   RUN yarn generate:types
 
+  # Prevent Payload from running during build
+  ENV PAYLOAD_BUILD=true
+
   # Then build
   RUN yarn build && yarn tsc
-  
   # ---------------------------
   # Runtime Image
   # ---------------------------
