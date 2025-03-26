@@ -17,22 +17,22 @@
   COPY package.json yarn.lock ./
   COPY .yarn/ .yarn/
   COPY .yarnrc.yml ./
+  COPY .env.production .env
   COPY . .
-
+  
   RUN corepack enable
   RUN yarn install --immutable
-
+  
+  # Prevent Payload from running during build
+  ENV PAYLOAD_BUILD=true
+  
   # After installing dependencies
   RUN yarn generate:graphQLSchema
   RUN yarn generate:types
-
-  # Prevent Payload from running during build
-  ENV PAYLOAD_BUILD=true
-
-  COPY .env .env 
-
-  # Then build
-  RUN yarn build  && yarn tsc
+  
+  # Then build everything
+  RUN yarn build --frozen-lockfile && yarn tsc
+  
   # ---------------------------
   # Runtime Image
   # ---------------------------
