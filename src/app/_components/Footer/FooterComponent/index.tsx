@@ -12,8 +12,11 @@ import { Gutter } from '../../Gutter'
 
 import classes from './index.module.scss'
 
-const FooterComponent = ({ footer }: { footer: Footer }) => {
+const FooterComponent = ({ footer }: { footer?: Footer | null }) => {
   const pathname = usePathname()
+
+  if (!footer) return null // 🔒 Avoid null access
+
   const navItems = footer.navItems || []
 
   return (
@@ -30,7 +33,6 @@ const FooterComponent = ({ footer }: { footer: Footer }) => {
                 style={{ width: '36px', height: '36px' }}
                 className={classes.icon}
               />
-
               <h5>{inclusion.title}</h5>
               <p>{inclusion.description}</p>
             </li>

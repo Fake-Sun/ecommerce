@@ -34,6 +34,8 @@ export default async function MediaBlockPage() {
   )
 }
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Media Block',
   description: 'Styleguide for media block.',
