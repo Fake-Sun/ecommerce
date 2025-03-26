@@ -18,6 +18,7 @@ import classes from './index.module.scss'
 
 export const dynamic = 'force-dynamic'
 
+console.log('[ENV] SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL)
 console.log('[ENV] NEXT_PUBLIC_SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL)
 
 export default async function Page({ params }: { params: { slug: string } }) {
@@ -73,7 +74,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
 export async function generateStaticParams() {
   try {
     const pages = await fetchDocs<Page>('pages')
-    return pages?.map(({ slug }) => ({ slug }))
+    return pages?.map(({ slug }) => ({ slug })) || []
   } catch {
     return []
   }
@@ -95,10 +96,19 @@ export async function generateMetadata({
       slug,
       draft: isDraftMode,
     })
-  } catch {}
+  } catch (err) {
+    console.error(`[generateMetadata] fetchDoc error:`, err)
+  }
 
   if (!page && slug === 'home') {
     page = staticHome
+  }
+
+  if (!page) {
+    return {
+      title: 'Page Not Found',
+      description: 'The page could not be found.',
+    }
   }
 
   return generateMeta({ doc: page })
