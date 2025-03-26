@@ -29,8 +29,10 @@
   # Prevent Payload from running during build
   ENV PAYLOAD_BUILD=true
 
+  COPY .env .env 
+
   # Then build
-  RUN yarn build && yarn tsc
+  RUN yarn build  && yarn tsc
   # ---------------------------
   # Runtime Image
   # ---------------------------
