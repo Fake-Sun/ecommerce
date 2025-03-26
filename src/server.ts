@@ -11,6 +11,8 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: path.resolve(__dirname, '../.env') })
 }
 
+console.log('[ENV] PAYLOAD_PUBLIC_SERVER_URL:', process.env.PAYLOAD_PUBLIC_SERVER_URL)
+console.log('[ENV] PAYLOAD_SECRET defined:', !!process.env.PAYLOAD_SECRET)
 const app = express()
 const PORT = process.env.PORT || 3000
 

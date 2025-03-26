@@ -18,6 +18,8 @@ import classes from './index.module.scss'
 
 export const dynamic = 'force-dynamic'
 
+console.log('[ENV] NEXT_PUBLIC_SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL)
+
 export default async function Page({ params }: { params: { slug: string } }) {
   const slug = params.slug ?? 'home'
   const { isEnabled: isDraftMode } = await draftMode()
