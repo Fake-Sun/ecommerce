@@ -15,4 +15,4 @@ This project is a full-stack e-commerce application built using the MERN stack (
 
 ## Live Test
 
-Can test dev mode here: https://insightful-transformation-production.up.railway.app/
+Can test production (Unoptimized) here: https://insightful-transformation-production.up.railway.app/
