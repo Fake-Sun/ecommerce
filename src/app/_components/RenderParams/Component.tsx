@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 import { Message } from '../Message'
@@ -20,23 +20,24 @@ export const RenderParamsComponent: React.FC<Props> = ({
   onParams,
 }) => {
   const searchParams = useSearchParams()
-  const [paramValues, setParamValues] = useState<(string | null)[]>([])
+
+  const paramValues = useMemo(() => {
+    return params.map(param => searchParams.get(param))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, params.join(',')]) // join array for stable dependency
+
+  const [values, setValues] = useState<(string | null)[]>([])
 
   useEffect(() => {
-    if (searchParams) {
-      const values = params.map(param => searchParams.get(param))
-      setParamValues(values)
-      if (onParams) {
-        onParams(values)
-      }
-    }
-  }, [searchParams, params, onParams])
+    setValues(paramValues)
+    if (onParams) onParams(paramValues)
+  }, [paramValues, onParams])
 
-  if (!paramValues.length || paramValues.every(v => !v)) return null
+  if (!values.length || values.every(v => !v)) return null
 
   return (
     <div className={className}>
-      {paramValues.map((paramValue, index) => {
+      {values.map((paramValue, index) => {
         if (!paramValue) return null
 
         return (
