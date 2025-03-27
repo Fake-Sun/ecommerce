@@ -82,6 +82,9 @@ const LoginForm: React.FC = () => {
       />
       <div className={classes.links}>
         <Link href="/create-account">Create an account</Link>
+        <a href="/create-account" style={{ color: 'blue' }}>
+          Create test link
+        </a>
         <br />
         <Link href="/recover-password">Recover your password</Link>
       </div>
