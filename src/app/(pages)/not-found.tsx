@@ -2,6 +2,8 @@ import { Button } from '../_components/Button'
 import { Gutter } from '../_components/Gutter'
 import { VerticalPadding } from '../_components/VerticalPadding'
 
+export const dynamic = 'force-dynamic'
+
 export default function NotFound() {
   return (
     <Gutter>

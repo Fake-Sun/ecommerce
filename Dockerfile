@@ -1,5 +1,5 @@
 # Base image
-FROM node:22-slim
+FROM node:22-slim AS base
 
 # Set working directory
 WORKDIR /home/node/app
@@ -7,22 +7,31 @@ WORKDIR /home/node/app
 # Install OS dependencies
 RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 
-# Copy package info
+# Copy necessary files
 COPY package.json yarn.lock ./
 COPY .yarn/ .yarn/
 COPY .yarnrc.yml ./
 
-# Install corepack + dependencies
+# Enable corepack & install deps
 RUN corepack enable
 RUN yarn install --immutable
 
-# Copy all files
+# Copy the rest of the app
 COPY . .
 
-# Set development environment
-ENV NODE_ENV=development
+# Build everything
+RUN yarn build
 
-# Expose port
+# Final image
+FROM node:22-slim
+
+WORKDIR /home/node/app
+
+COPY --from=base /home/node/app /home/node/app
+
+ENV NODE_ENV=production
+ENV PAYLOAD_CONFIG_PATH=dist/payload/payload.config.js
+
 EXPOSE 3000
 
-CMD ["yarn", "dev"]
+CMD ["node", "dist/server.js"]

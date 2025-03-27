@@ -13,6 +13,9 @@ import AccountForm from './AccountForm'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
+
 export default async function Account() {
   const { user } = await getMeUser({
     nullUserRedirect: `/login?error=${encodeURIComponent(
