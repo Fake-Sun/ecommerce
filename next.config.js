@@ -4,7 +4,6 @@ const redirects = require('./redirects')
 
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
   images: {
     remotePatterns: [
       {
