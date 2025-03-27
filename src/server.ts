@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000
 app.use((req, res, nextMiddleware) => {
   res.setHeader(
     'Content-Security-Policy',
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'none';",
+    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; object-src 'none'; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https:; connect-src *",
   )
   nextMiddleware()
 })
