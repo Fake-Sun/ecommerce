@@ -7,27 +7,26 @@ WORKDIR /home/node/app
 # Install OS dependencies
 RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 
-# Copy necessary files
+# Copy package info
 COPY package.json yarn.lock ./
 COPY .yarn/ .yarn/
 COPY .yarnrc.yml ./
-COPY . .
 
-# Enable corepack & install deps
+# Install corepack + dependencies
 RUN corepack enable
 RUN yarn install --immutable
 
-# Optional: generate Payload types and schema
-RUN yarn generate:graphQLSchema || true
-RUN yarn generate:types || true
+# Copy all files
+COPY . .
 
-# ⚠️ MISSING BUILD STEP — this compiles Payload + server + Next.js
-RUN yarn build
-RUN yarn copyfiles
+# Install nodemon globally (dev-only)
+RUN yarn global add nodemon ts-node
 
+# Set development environment
+ENV NODE_ENV=development
 
-# Expose the app port
+# Expose port
 EXPOSE 3000
 
-# Run in production mode
-CMD ["env", "PAYLOAD_CONFIG_PATH=dist/payload/payload.config.js", "node", "--max-old-space-size=1024", "dist/server.js"]
+# Start dev server with nodemon
+CMD ["nodemon"]

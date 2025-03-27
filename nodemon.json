@@ -1,8 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/nodemon.json",
-  "watch": ["server.ts"],
+  "watch": ["src/server.ts"],
   "ignore": ["dist", ".next", "node_modules", "media", "src/app"],
-  "exec": "ts-node --project tsconfig.server.json src/server.ts -- -I",
+  "exec": "ts-node --project tsconfig.server.json src/server.ts",
   "ext": "ts,tsx,js,json",
-  "stdin": false
+  "stdin": false,
+  "legacyWatch": true
 }
