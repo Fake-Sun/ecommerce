@@ -23,13 +23,12 @@ const LoginForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
 
   const searchParams = useSearchParams()
-  const redirect = useRef<string | null>(null)
+  const redirectRef = useRef<string | null>(null)
 
   useEffect(() => {
-    redirect.current = searchParams.get('redirect')
+    redirectRef.current = searchParams.get('redirect')
+    console.log('[LoginForm] redirect param:', redirectRef.current)
   }, [searchParams])
-
-  const allParams = searchParams.toString() ? `?${searchParams.toString()}` : ''
 
   const {
     register,
@@ -42,13 +41,17 @@ const LoginForm: React.FC = () => {
       try {
         const user = await login(data)
         setUser(user)
-        if (redirect.current) router.push(redirect.current)
-        else router.push('/')
+
+        if (redirectRef.current) {
+          router.push(redirectRef.current)
+        } else {
+          router.push('/')
+        }
       } catch (_) {
         setError('There was an error with the credentials provided. Please try again.')
       }
     },
-    [login, router, setUser],
+    [login, setUser, router]
   )
 
   return (
@@ -78,9 +81,9 @@ const LoginForm: React.FC = () => {
         className={classes.submit}
       />
       <div className={classes.links}>
-        <Link href={`/create-account${allParams}`}>Create an account</Link>
+        <Link href="/create-account">Create an account</Link>
         <br />
-        <Link href={`/recover-password${allParams}`}>Recover your password</Link>
+        <Link href="/recover-password">Recover your password</Link>
       </div>
     </form>
   )
