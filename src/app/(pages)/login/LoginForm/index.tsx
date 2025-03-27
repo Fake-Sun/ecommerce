@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -23,13 +23,18 @@ const LoginForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
 
   const searchParams = useSearchParams()
-  const redirect = searchParams.get('redirect')
+  const redirect = useRef<string | null>(null)
+
+  useEffect(() => {
+    redirect.current = searchParams.get('redirect')
+  }, [searchParams])
+
   const allParams = searchParams.toString() ? `?${searchParams.toString()}` : ''
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isLoading },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>()
 
   const onSubmit = useCallback(
@@ -37,14 +42,13 @@ const LoginForm: React.FC = () => {
       try {
         const user = await login(data)
         setUser(user)
-        if (redirect) router.push(redirect)
+        if (redirect.current) router.push(redirect.current)
         else router.push('/')
-        window.location.href = '/'
       } catch (_) {
         setError('There was an error with the credentials provided. Please try again.')
       }
     },
-    [login, setUser, router, redirect],
+    [login, router, setUser],
   )
 
   return (
@@ -69,8 +73,8 @@ const LoginForm: React.FC = () => {
       <Button
         type="submit"
         appearance="primary"
-        label={isLoading ? 'Processing' : 'Login'}
-        disabled={isLoading}
+        label={isSubmitting ? 'Processing' : 'Login'}
+        disabled={isSubmitting}
         className={classes.submit}
       />
       <div className={classes.links}>
