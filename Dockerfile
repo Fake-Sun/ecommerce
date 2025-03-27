@@ -21,8 +21,11 @@ RUN yarn install --immutable
 RUN yarn generate:graphQLSchema || true
 RUN yarn generate:types || true
 
+# ⚠️ MISSING BUILD STEP — this compiles Payload + server + Next.js
+RUN yarn build
+
 # Expose the app port
 EXPOSE 3000
 
-# Run in development mode
+# Run in production mode
 CMD ["node", "--max-old-space-size=1024", "dist/server.js"]
