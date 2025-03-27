@@ -46,6 +46,7 @@ export const Input: React.FC<Props> = ({
             : {}),
         })}
         disabled={disabled}
+        id={name}
       />
       {error && (
         <div className={classes.errorMessage}>
