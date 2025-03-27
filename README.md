@@ -13,7 +13,6 @@ This project is a full-stack e-commerce application built using the MERN stack (
 - **Responsive Design**: Optimized for various devices to ensure a seamless user experience.
 
 
-## Deployment
+## Live Test
 
-yarn install
-yarn run dev
+Can test dev mode here: https://insightful-transformation-production.up.railway.app/
