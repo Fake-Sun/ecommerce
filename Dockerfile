@@ -25,4 +25,4 @@ RUN yarn generate:types || true
 EXPOSE 3000
 
 # Run in development mode
-CMD ["yarn", "dev"]
+CMD ["node", "--max-old-space-size=1024", "dist/server.js"]
