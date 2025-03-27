@@ -30,4 +30,4 @@ RUN yarn copyfiles
 EXPOSE 3000
 
 # Run in production mode
-CMD ["node", "--max-old-space-size=1024", "dist/server.js"]
+CMD ["env", "PAYLOAD_CONFIG_PATH=dist/payload/payload.config.js", "node", "--max-old-space-size=1024", "dist/server.js"]
