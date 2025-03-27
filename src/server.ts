@@ -11,13 +11,19 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: path.resolve(__dirname, '../.env') })
 }
 
-console.log('[ENV] PAYLOAD_PUBLIC_SERVER_URL:', process.env.PAYLOAD_PUBLIC_SERVER_URL)
-console.log('[ENV] PAYLOAD_SECRET defined:', !!process.env.PAYLOAD_SECRET)
 const app = express()
 const PORT = process.env.PORT || 3000
 
+// ✅ Inject CSP header before anything else
+app.use((req, res, nextMiddleware) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'none';",
+  )
+  nextMiddleware()
+})
+
 const start = async (): Promise<void> => {
-  // Skip everything if building Docker image
   if (process.env.PAYLOAD_BUILD === 'true') {
     console.log('[INFO] Skipping Payload init during Docker build.')
     return
@@ -50,24 +56,16 @@ const start = async (): Promise<void> => {
     dev: process.env.NODE_ENV !== 'production',
   })
 
-  app.use('/media', express.static(path.resolve(__dirname, './media')))
-
   const nextHandler = nextApp.getRequestHandler()
 
-  // Serve static files (like .svg) from public/
   app.use(express.static(path.resolve(__dirname, '../public')))
-
-  // Serve uploaded media files from media/
   app.use('/media', express.static(path.resolve(__dirname, './media')))
-
   app.use('/_next', express.static(path.resolve(__dirname, '../.next')))
 
-  // Next.js pages and API routes
   app.use((req, res) => nextHandler(req, res))
 
   nextApp.prepare().then(() => {
     payload.logger.info('Starting Next.js...')
-
     app.listen(PORT, async () => {
       payload.logger.info(`Next.js App URL: ${process.env.PAYLOAD_PUBLIC_SERVER_URL}`)
     })
