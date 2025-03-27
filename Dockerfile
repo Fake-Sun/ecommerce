@@ -19,14 +19,10 @@ RUN yarn install --immutable
 # Copy all files
 COPY . .
 
-# Install nodemon globally (dev-only)
-RUN yarn global add nodemon ts-node
-
 # Set development environment
 ENV NODE_ENV=development
 
 # Expose port
 EXPOSE 3000
 
-# Start dev server with nodemon
-CMD ["nodemon"]
+CMD ["yarn", "dev"]
