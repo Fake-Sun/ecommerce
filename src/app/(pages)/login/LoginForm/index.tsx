@@ -28,7 +28,7 @@ const LoginForm: React.FC = () => {
   const redirect = useRef<string | null>(null)
 
   useEffect(() => {
-    setSearchParams(searchParamsHook)
+    setSearchParams(new URLSearchParams(searchParamsHook.toString()))
     redirect.current = searchParamsHook.get('redirect')
   }, [searchParamsHook])
 
