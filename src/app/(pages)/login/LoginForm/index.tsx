@@ -51,7 +51,7 @@ const LoginForm: React.FC = () => {
         setError('There was an error with the credentials provided. Please try again.')
       }
     },
-    [login, setUser, router]
+    [login, setUser, router],
   )
 
   return (
