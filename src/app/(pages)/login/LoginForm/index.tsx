@@ -81,9 +81,13 @@ const LoginForm: React.FC = () => {
         className={classes.submit}
       />
       <div className={classes.links}>
-        <Link href="/create-account">Create an account</Link>
+        <button type="button" onClick={() => (window.location.href = '/create-account')}>
+          Create an account
+        </button>
         <br />
-        <Link href="/recover-password">Recover your password</Link>
+        <button type="button" onClick={() => (window.location.href = '/recover-password')}>
+          Recover your password
+        </button>
       </div>
     </form>
   )
