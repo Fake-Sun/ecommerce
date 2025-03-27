@@ -1,65 +1,28 @@
-# ---------------------------
-# Base Image
-# ---------------------------
-  FROM node:22-slim AS base
+# Base image
+FROM node:22-slim
 
-  # ---------------------------
-  # Builder Image
-  # ---------------------------
-  FROM base AS builder
-  
-  WORKDIR /home/node/app
-  
-  # OS deps
-  RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
-  
-  # Copy files needed to install and build
-  COPY package.json yarn.lock ./
-  COPY .yarn/ .yarn/
-  COPY .yarnrc.yml ./
-  COPY .env.production .env
-  COPY . .
-  
-  RUN corepack enable
-  RUN yarn install --immutable
-  
-  # Prevent Payload from running during build
-  ENV PAYLOAD_BUILD=true
-  
-  # After installing dependencies
-  RUN yarn generate:graphQLSchema
-  RUN yarn generate:types
-  
-  # Then build everything
-  RUN yarn build && yarn tsc
-  
-  # ---------------------------
-  # Runtime Image
-  # ---------------------------
-  FROM base AS runtime
-  
-  WORKDIR /home/node/app
-  
-  ENV NODE_ENV=production
-  ENV PAYLOAD_CONFIG_PATH=dist/payload/payload.config.js
-  
-  # Install runtime dependencies
-  COPY package.json yarn.lock ./
-  COPY .yarn/ .yarn/
-  COPY .yarnrc.yml ./
-  RUN corepack enable
-  RUN yarn install --immutable
-  
-  # Optional (if ts-node needed)
-  RUN yarn add ts-node typescript @types/node
-  
-  # Copy built files from builder
-  COPY --from=builder /home/node/app/dist ./dist
-  COPY --from=builder /home/node/app/build ./build
-  COPY --from=builder /home/node/app/src ./src
-  COPY --from=builder /home/node/app/public ./public
-  
-  EXPOSE 3000
-  
-  CMD ["node", "dist/server.js"]
-  
+# Set working directory
+WORKDIR /home/node/app
+
+# Install OS dependencies
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
+
+# Copy necessary files
+COPY package.json yarn.lock ./
+COPY .yarn/ .yarn/
+COPY .yarnrc.yml ./
+COPY . .
+
+# Enable corepack & install deps
+RUN corepack enable
+RUN yarn install --immutable
+
+# Optional: generate Payload types and schema
+RUN yarn generate:graphQLSchema || true
+RUN yarn generate:types || true
+
+# Expose the app port
+EXPOSE 3000
+
+# Run in development mode
+CMD ["yarn", "dev"]
