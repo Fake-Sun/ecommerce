@@ -23,6 +23,8 @@ RUN yarn generate:types || true
 
 # ⚠️ MISSING BUILD STEP — this compiles Payload + server + Next.js
 RUN yarn build
+RUN yarn copyfiles
+
 
 # Expose the app port
 EXPOSE 3000
