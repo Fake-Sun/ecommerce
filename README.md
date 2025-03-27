@@ -1,18 +1,28 @@
 # E-Commerce Website
 
-This project is a full-stack e-commerce application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) with TypeScript. It integrates Payload CMS for content management and Stripe for payment processing. The application offers a dynamic admin dashboard, product management, payment integration, and a CMS for easy content management.
+This project is a full-stack e-commerce application built using the **MERN stack** with **TypeScript**, integrating **Payload CMS** for content management and **Stripe** for payment processing. It provides a complete admin dashboard, dynamic product management, secure authentication, and a fully functional online store.
 
-## Features
+## 🚀 Features
 
-- **Admin Dashboard**: Manage products, categories, and orders through an intuitive interface.
-- **Product Management**: Add, update, or remove products with ease.
-- **User Authentication**: Secure user registration and login functionality.
-- **Shopping Cart**: Users can add products to their cart and proceed to checkout.
-- **Stripe Integration**: Seamless payment processing with Stripe.
-- **Content Management**: Utilize Payload CMS to manage website content efficiently.
-- **Responsive Design**: Optimized for various devices to ensure a seamless user experience.
+- 🛠 **Admin Dashboard** – Manage products, categories, orders, and more via Payload CMS.
+- 🛍 **Product Management** – Easily add, update, or remove products.
+- 🔐 **User Authentication** – Secure user registration and login functionality.
+- 🛒 **Shopping Cart** – Users can add items to their cart and proceed to checkout.
+- 💳 **Stripe Integration** – Seamless and secure payment processing.
+- 🧑‍💼 **Content Management** – Built-in CMS using Payload for pages, banners, SEO, and more.
+- 📱 **Responsive Design** – Optimized for desktops, tablets, and mobile devices.
 
+## 🌐 Technologies Used
 
-## Live Test
+- **Frontend**: Next.js 15 (App Router), React, Tailwind CSS, TypeScript
+- **Backend**: Node.js, Express.js, Payload CMS
+- **Database**: MongoDB (via Mongoose)
+- **Payments**: Stripe API + Webhooks
+- **Authentication**: Payload Auth + JWT
+- **Deployment**: Railway (Backend), Vercel (Frontend)
+- **Misc**: Nodemon, ts-node, ESLint, Prettier, Docker (multi-stage build)
 
-Can test production (Unoptimized) here: https://insightful-transformation-production.up.railway.app/
+## 🔗 Live Demo
+
+You can test the production build (⚠️ *Unoptimized*) here:  
+👉 [https://insightful-transformation-production.up.railway.app/](https://insightful-transformation-production.up.railway.app/)
