@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -22,17 +22,9 @@ const LoginForm: React.FC = () => {
   const { login, setUser } = useAuth()
   const [error, setError] = useState<string | null>(null)
 
-  // ✅ Wrap searchParams to avoid hydration issues
-  const searchParamsHook = useSearchParams()
-  const [searchParams, setSearchParams] = useState<URLSearchParams>()
-  const redirect = useRef<string | null>(null)
-
-  useEffect(() => {
-    setSearchParams(new URLSearchParams(searchParamsHook.toString()))
-    redirect.current = searchParamsHook.get('redirect')
-  }, [searchParamsHook])
-
-  const allParams = searchParams?.toString() ? `?${searchParams.toString()}` : ''
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirect')
+  const allParams = searchParams.toString() ? `?${searchParams.toString()}` : ''
 
   const {
     register,
@@ -45,14 +37,14 @@ const LoginForm: React.FC = () => {
       try {
         const user = await login(data)
         setUser(user)
-        if (redirect?.current) router.push(redirect.current)
+        if (redirect) router.push(redirect)
         else router.push('/')
         window.location.href = '/'
       } catch (_) {
         setError('There was an error with the credentials provided. Please try again.')
       }
     },
-    [login, setUser, router],
+    [login, setUser, router, redirect],
   )
 
   return (
