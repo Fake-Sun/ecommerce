@@ -26,3 +26,7 @@ This project is a full-stack e-commerce application built using the **MERN stack
 
 You can test the production build (⚠️ *Unoptimized*) here:  
 👉 [https://insightful-transformation-production.up.railway.app/](https://insightful-transformation-production.up.railway.app/)
+
+## 💻 Run Locally
+
+- 🔧 `yarn dev`
