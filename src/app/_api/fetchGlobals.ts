@@ -1,6 +1,6 @@
 import type { Footer, Header, Settings } from '../../payload/payload-types'
 import { FOOTER_QUERY, HEADER_QUERY, SETTINGS_QUERY } from '../_graphql/globals'
-import { GRAPHQL_API_URL } from './shared'
+import { GRAPHQL_API_URL, PUBLIC_CONTENT_REVALIDATE } from './shared'
 
 export async function fetchSettings(): Promise<Settings> {
   if (!process.env.NEXT_PUBLIC_SERVER_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
@@ -10,7 +10,9 @@ export async function fetchSettings(): Promise<Settings> {
     headers: {
       'Content-Type': 'application/json',
     },
-    cache: 'no-store',
+    next: {
+      revalidate: PUBLIC_CONTENT_REVALIDATE,
+    },
     body: JSON.stringify({
       query: SETTINGS_QUERY,
     }),
@@ -35,7 +37,9 @@ export async function fetchHeader(): Promise<Header> {
     headers: {
       'Content-Type': 'application/json',
     },
-    cache: 'no-store',
+    next: {
+      revalidate: PUBLIC_CONTENT_REVALIDATE,
+    },
     body: JSON.stringify({
       query: HEADER_QUERY,
     }),
@@ -60,6 +64,9 @@ export async function fetchFooter(): Promise<Footer> {
     headers: {
       'Content-Type': 'application/json',
     },
+    next: {
+      revalidate: PUBLIC_CONTENT_REVALIDATE,
+    },
     body: JSON.stringify({
       query: FOOTER_QUERY,
     }),
@@ -81,17 +88,14 @@ export const fetchGlobals = async (): Promise<{
   header: Header
   footer: Footer
 }> => {
-  // initiate requests in parallel, then wait for them to resolve
-  // this will eagerly start to the fetch requests at the same time
-  // see https://nextjs.org/docs/app/building-your-application/data-fetching/fetching
   const settingsData = fetchSettings()
   const headerData = fetchHeader()
   const footerData = fetchFooter()
 
   const [settings, header, footer]: [Settings, Header, Footer] = await Promise.all([
-    await settingsData,
-    await headerData,
-    await footerData,
+    settingsData,
+    headerData,
+    footerData,
   ])
 
   return {

@@ -3,15 +3,12 @@ import { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 
-import type { Product, Product as ProductType } from '../../../../payload/payload-types'
+import type { Product } from '../../../../payload/payload-types'
 import { fetchDoc } from '../../../_api/fetchDoc'
-import { fetchDocs } from '../../../_api/fetchDocs'
 import { Blocks } from '../../../_components/Blocks'
 import { PaywallBlocks } from '../../../_components/PaywallBlocks'
 import { ProductHero } from '../../../_heros/Product'
 import { generateMeta } from '../../../_utilities/generateMeta'
-
-export const dynamic = 'force-dynamic'
 
 interface ProductPageProps {
   params: { slug: string }
@@ -62,15 +59,6 @@ export default async function Product({ params }: ProductPageProps) {
       />
     </>
   )
-}
-
-export async function generateStaticParams() {
-  try {
-    const products = await fetchDocs<ProductType>('products')
-    return products?.map(({ slug }) => ({ slug })) || []
-  } catch (error) {
-    return []
-  }
 }
 
 export async function generateMetadata({

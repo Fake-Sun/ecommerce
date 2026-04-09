@@ -5,14 +5,12 @@ import { Gutter } from '../../_components/Gutter'
 import { CMSLink } from '../../_components/Link'
 import { Media } from '../../_components/Media'
 import RichText from '../../_components/RichText'
+import { getMediaURL } from '../../_utilities/getServerURL'
 
 import classes from './index.module.scss'
 
 export const CustomHero: React.FC<Page['hero']> = ({ richText, media, links }) => {
-  const mediaUrl =
-    media &&
-    typeof media !== 'string' &&
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/media/${media.filename}`
+  const mediaUrl = media && typeof media !== 'string' && getMediaURL(media.filename)
 
   return (
     <section className={classes.hero}>

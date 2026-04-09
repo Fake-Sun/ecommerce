@@ -16,11 +16,6 @@ import { generateMeta } from '../../_utilities/generateMeta'
 
 import classes from './index.module.scss'
 
-export const dynamic = 'force-dynamic'
-
-console.log('[ENV] SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL)
-console.log('[ENV] NEXT_PUBLIC_SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL)
-
 export default async function Page({ params }: { params: { slug: string } }) {
   const slug = params.slug ?? 'home'
   const { isEnabled: isDraftMode } = await draftMode()
@@ -69,15 +64,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
       )}
     </React.Fragment>
   )
-}
-
-export async function generateStaticParams() {
-  try {
-    const pages = await fetchDocs<Page>('pages')
-    return pages?.map(({ slug }) => ({ slug })) || []
-  } catch {
-    return []
-  }
 }
 
 export async function generateMetadata({

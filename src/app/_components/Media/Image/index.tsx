@@ -3,6 +3,7 @@
 import React from 'react'
 import NextImage, { StaticImageData } from 'next/image'
 
+import { getMediaURL } from '../../../_utilities/getServerURL'
 import cssVariables from '../../../cssVariables'
 import { Props as MediaProps } from '../types'
 
@@ -43,17 +44,15 @@ export const Image: React.FC<MediaProps> = props => {
 
     const filename = fullFilename
 
-    src = `/media/${filename}`
+    src = getMediaURL(filename)
   }
 
-  // NOTE: this is used by the browser to determine which image to download at different screen sizes
   const sizes = Object.entries(breakpoints)
     .map(([, value]) => `(max-width: ${value}px) ${value}px`)
     .join(', ')
 
   return (
     <NextImage
-      unoptimized
       className={[isLoading && classes.placeholder, classes.image, imgClassName]
         .filter(Boolean)
         .join(' ')}

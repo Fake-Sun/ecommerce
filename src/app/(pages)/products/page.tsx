@@ -11,8 +11,6 @@ import Filters from './Filters'
 
 import classes from './index.module.scss'
 
-export const dynamic = 'force-dynamic'
-
 const Products = async () => {
   const { isEnabled: isDraftMode } = await draftMode()
 
@@ -32,7 +30,7 @@ const Products = async () => {
   }
 
   if (!page) {
-    return null // or notFound(), or a fallback UI
+    return null
   }
 
   return (

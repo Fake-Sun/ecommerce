@@ -4,7 +4,7 @@ import type { Config } from '../../payload/payload-types'
 import { ORDER } from '../_graphql/orders'
 import { PAGE } from '../_graphql/pages'
 import { PRODUCT } from '../_graphql/products'
-import { GRAPHQL_API_URL } from './shared'
+import { GRAPHQL_API_URL, PUBLIC_CONTENT_REVALIDATE } from './shared'
 import { payloadToken } from './token'
 
 const queryMap = {
@@ -40,14 +40,17 @@ export const fetchDoc = async <T>(args: {
     token = cookieStore.get(payloadToken)
   }
 
-  const doc: T = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
+  const fetchOptions: RequestInit & {
+    next?: {
+      revalidate?: number
+      tags?: string[]
+    }
+  } = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ...(token?.value && draft ? { Authorization: `JWT ${token.value}` } : {}),
     },
-    cache: 'no-store',
-    next: { tags: [`${collection}_${slug}`] },
     body: JSON.stringify({
       query: queryMap[collection].query,
       variables: {
@@ -55,6 +58,19 @@ export const fetchDoc = async <T>(args: {
         draft,
       },
     }),
+  }
+
+  if (draft) {
+    fetchOptions.cache = 'no-store'
+  } else {
+    fetchOptions.next = {
+      revalidate: PUBLIC_CONTENT_REVALIDATE,
+      tags: [slug ? `${collection}_${slug}` : collection],
+    }
+  }
+
+  const doc: T = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
+    ...fetchOptions,
   })
     ?.then(res => res.json())
     ?.then(res => {
