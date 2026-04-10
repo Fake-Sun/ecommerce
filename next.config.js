@@ -1,18 +1,19 @@
-/** @type {import('next').NextConfig} */
-const serverURL =
+/** @type {import(''next'').NextConfig} */
+const apiURL =
+  process.env.NEXT_PUBLIC_API_URL ||
   process.env.NEXT_PUBLIC_SERVER_URL ||
   process.env.PAYLOAD_PUBLIC_SERVER_URL ||
   'http://localhost:3000'
-const parsedServerURL = new URL(serverURL)
+const parsedAPIURL = new URL(apiURL)
 
 const nextConfig = {
   reactStrictMode: true,
   images: {
     remotePatterns: [
       {
-        protocol: parsedServerURL.protocol.replace(':', ''),
-        hostname: parsedServerURL.hostname,
-        port: parsedServerURL.port,
+        protocol: parsedAPIURL.protocol.replace(':', ''),
+        hostname: parsedAPIURL.hostname,
+        port: parsedAPIURL.port,
         pathname: '/media/**',
       },
     ],

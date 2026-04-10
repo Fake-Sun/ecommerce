@@ -25,11 +25,14 @@ export async function GET(
     return new Response('You are not allowed to preview this page', { status: 403 })
   }
 
-  const userReq = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`, {
-    headers: {
-      Authorization: `JWT ${token}`,
+  const userReq = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
+    {
+      headers: {
+        Authorization: `JWT ${token}`,
+      },
     },
-  })
+  )
 
   const userRes = await userReq.json()
 

@@ -50,7 +50,9 @@ export const CheckoutPage: React.FC<{
       const makeIntent = async () => {
         try {
           const paymentReq = await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/create-payment-intent`,
+            `${
+              process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL
+            }/api/create-payment-intent`,
             {
               method: 'POST',
               credentials: 'include',

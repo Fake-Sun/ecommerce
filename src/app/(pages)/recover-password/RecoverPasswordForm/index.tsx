@@ -26,7 +26,9 @@ export const RecoverPasswordForm: React.FC = () => {
 
   const onSubmit = useCallback(async (data: FormData) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/forgot-password`,
+      `${
+        process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL
+      }/api/users/forgot-password`,
       {
         method: 'POST',
         body: JSON.stringify(data),

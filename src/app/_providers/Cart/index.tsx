@@ -67,7 +67,9 @@ export const CartProvider = props => {
           const initialCart = await Promise.all(
             parsedCart.items.map(async ({ product, quantity }) => {
               const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${product}`,
+                `${
+                  process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL
+                }/api/products/${product}`,
               )
               const data = await res.json()
               return {
@@ -123,12 +125,17 @@ export const CartProvider = props => {
     }
 
     try {
-      const req = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${user.id}`, {
-        credentials: 'include',
-        method: 'PATCH',
-        body: JSON.stringify({ cart }),
-        headers: { 'Content-Type': 'application/json' },
-      })
+      const req = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${
+          user.id
+        }`,
+        {
+          credentials: 'include',
+          method: 'PATCH',
+          body: JSON.stringify({ cart }),
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
 
       if (req.ok) {
         localStorage.setItem('cart', '[]')

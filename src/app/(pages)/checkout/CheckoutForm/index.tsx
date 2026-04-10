@@ -30,7 +30,9 @@ export const CheckoutForm: React.FC<{}> = () => {
           elements: elements!,
           redirect: 'if_required',
           confirmParams: {
-            return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/order-confirmation`,
+            return_url: `${
+              process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_SERVER_URL || ''
+            }/order-confirmation`,
           },
         })
 
@@ -45,25 +47,30 @@ export const CheckoutForm: React.FC<{}> = () => {
           // you will be redirected to the `/cart` page before this redirect happens
           // Instead, we clear the cart in an `afterChange` hook on the `orders` collection in Payload
           try {
-            const orderReq = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders`, {
-              method: 'POST',
-              credentials: 'include',
-              headers: {
-                'Content-Type': 'application/json',
+            const orderReq = await fetch(
+              `${
+                process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL || ''
+              }/api/orders`,
+              {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  total: cartTotal.raw,
+                  stripePaymentIntentID: paymentIntent.id,
+                  items: (cart?.items || [])?.map(({ product, quantity }) => ({
+                    product: typeof product === 'string' ? product : product.id,
+                    quantity,
+                    price:
+                      typeof product === 'object'
+                        ? priceFromJSON(product.priceJSON, 1, true)
+                        : undefined,
+                  })),
+                }),
               },
-              body: JSON.stringify({
-                total: cartTotal.raw,
-                stripePaymentIntentID: paymentIntent.id,
-                items: (cart?.items || [])?.map(({ product, quantity }) => ({
-                  product: typeof product === 'string' ? product : product.id,
-                  quantity,
-                  price:
-                    typeof product === 'object'
-                      ? priceFromJSON(product.priceJSON, 1, true)
-                      : undefined,
-                })),
-              }),
-            })
+            )
 
             if (!orderReq.ok) throw new Error(orderReq.statusText || 'Something went wrong.')
 

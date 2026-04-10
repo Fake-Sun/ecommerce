@@ -33,11 +33,7 @@ export const OrderConfirmationPage: React.FC = () => {
           </p>
           <div className={classes.actions}>
             <Button href="/account" label="View account" appearance="primary" />
-            <Button
-              href={`${process.env.NEXT_PUBLIC_SERVER_URL}/orders`}
-              label="View all orders"
-              appearance="secondary"
-            />
+            <Button href={'/orders'} label="View all orders" appearance="secondary" />
           </div>
         </Fragment>
       ) : (
@@ -49,11 +45,7 @@ export const OrderConfirmationPage: React.FC = () => {
           </p>
           <div className={classes.actions}>
             <Button href={`/account/orders/${orderID}`} label="View order" appearance="primary" />
-            <Button
-              href={`${process.env.NEXT_PUBLIC_SERVER_URL}/account/orders`}
-              label="View all orders"
-              appearance="secondary"
-            />
+            <Button href={'/account/orders'} label="View all orders" appearance="secondary" />
           </div>
         </Fragment>
       )}

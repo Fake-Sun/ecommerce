@@ -3,7 +3,7 @@ import { FOOTER_QUERY, HEADER_QUERY, SETTINGS_QUERY } from '../_graphql/globals'
 import { GRAPHQL_API_URL, PUBLIC_CONTENT_REVALIDATE } from './shared'
 
 export async function fetchSettings(): Promise<Settings> {
-  if (!process.env.NEXT_PUBLIC_SERVER_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
+  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_API_URL not found')
 
   const settings = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
     method: 'POST',
@@ -30,7 +30,7 @@ export async function fetchSettings(): Promise<Settings> {
 }
 
 export async function fetchHeader(): Promise<Header> {
-  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
+  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_API_URL not found')
 
   const header = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
     method: 'POST',
@@ -57,7 +57,7 @@ export async function fetchHeader(): Promise<Header> {
 }
 
 export async function fetchFooter(): Promise<Footer> {
-  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
+  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_API_URL not found')
 
   const footer = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
     method: 'POST',
