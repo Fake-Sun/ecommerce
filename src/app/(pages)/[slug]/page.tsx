@@ -16,6 +16,8 @@ import { generateMeta } from '../../_utilities/generateMeta'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Page({ params }: { params: { slug: string } }) {
   const slug = params.slug ?? 'home'
   const { isEnabled: isDraftMode } = await draftMode()

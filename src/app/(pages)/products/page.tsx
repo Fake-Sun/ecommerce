@@ -11,6 +11,8 @@ import Filters from './Filters'
 
 import classes from './index.module.scss'
 
+export const dynamic = 'force-dynamic'
+
 const Products = async () => {
   const { isEnabled: isDraftMode } = await draftMode()
 
