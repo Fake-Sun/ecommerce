@@ -38,7 +38,7 @@
     "dotenv": "^8.2.0",
     "escape-html": "^1.0.3",
     "express": "^4.17.1",
-    "next": "15.2.6",
+    "next": "^15.2.8",
     "payload": "^2.0.7",
     "payload-admin-bar": "^1.0.6",
     "qs": "6.11.2",
