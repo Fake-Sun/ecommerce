@@ -13,6 +13,8 @@ export const CustomerSelect: React.FC<TextField> = props => {
   >([])
 
   const { value: stripeCustomerID } = useFormFields(([fields]) => fields[name]) || {}
+  const stripeDashboardPrefix =
+    process.env.PAYLOAD_PUBLIC_STRIPE_IS_TEST_KEY === 'true' ? 'test/' : ''
 
   React.useEffect(() => {
     const getStripeCustomers = async () => {
@@ -52,9 +54,7 @@ export const CustomerSelect: React.FC<TextField> = props => {
     getStripeCustomers()
   }, [])
 
-  const href = `https://dashboard.stripe.com/${
-    process.env.PAYLOAD_PUBLIC_STRIPE_IS_TEST_KEY ? 'test/' : ''
-  }customers/${stripeCustomerID}`
+  const href = `https://dashboard.stripe.com/${stripeDashboardPrefix}customers/${stripeCustomerID}`
 
   return (
     <div>
@@ -67,9 +67,7 @@ export const CustomerSelect: React.FC<TextField> = props => {
       >
         {`Select the related Stripe customer or `}
         <a
-          href={`https://dashboard.stripe.com/${
-            process.env.PAYLOAD_PUBLIC_STRIPE_IS_TEST_KEY ? 'test/' : ''
-          }customers/create`}
+          href={`https://dashboard.stripe.com/${stripeDashboardPrefix}customers/create`}
           target="_blank"
           rel="noopener noreferrer"
           style={{ color: 'var(--theme-text' }}
@@ -101,13 +99,7 @@ export const CustomerSelect: React.FC<TextField> = props => {
               fontWeight: '600',
             }}
           >
-            <a
-              href={`https://dashboard.stripe.com/${
-                process.env.PAYLOAD_PUBLIC_STRIPE_IS_TEST_KEY ? 'test/' : ''
-              }customers/${stripeCustomerID}`}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
+            <a href={href} target="_blank" rel="noreferrer noopener">
               {href}
             </a>
           </div>

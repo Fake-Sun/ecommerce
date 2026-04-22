@@ -34,6 +34,7 @@ const generateTitle: GenerateTitle = () => {
 }
 
 const mockModulePath = path.resolve(__dirname, './emptyModuleMock.js')
+const isStripeTestKey = process.env.PAYLOAD_PUBLIC_STRIPE_IS_TEST_KEY === 'true'
 
 dotenv.config({
   path: path.resolve(__dirname, '../../.env'),
@@ -126,7 +127,7 @@ export default buildConfig({
   plugins: [
     stripePlugin({
       stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
-      isTestKey: Boolean(process.env.PAYLOAD_PUBLIC_STRIPE_IS_TEST_KEY),
+      isTestKey: isStripeTestKey,
       stripeWebhooksEndpointSecret: process.env.STRIPE_WEBHOOKS_SIGNING_SECRET,
       rest: false,
       webhooks: {
