@@ -15,7 +15,12 @@ import payload from 'payload'
 import { seed } from './payload/seed'
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = Number(process.env.PORT || 3000)
+const HOST = process.env.HOST || '0.0.0.0'
+
+app.get('/health', (_, res) => {
+  res.status(200).json({ status: 'ok' })
+})
 
 // Redirect root to the admin panel
 app.get('/', (_, res) => {
@@ -36,8 +41,9 @@ const start = async (): Promise<void> => {
     process.exit()
   }
 
-  app.listen(PORT, async () => {
+  app.listen(PORT, HOST, async () => {
     payload.logger.info(`App URL: ${process.env.PAYLOAD_PUBLIC_SERVER_URL}`)
+    payload.logger.info(`Listening on http://${HOST}:${PORT}`)
   })
 }
 

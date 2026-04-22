@@ -12,15 +12,20 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = Number(process.env.PORT || 3000)
+const HOST = process.env.HOST || '0.0.0.0'
 
-// ✅ Inject CSP header before anything else
+// Inject CSP header before anything else
 app.use((req, res, nextMiddleware) => {
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; object-src 'none'; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https:; connect-src *",
   )
   nextMiddleware()
+})
+
+app.get('/health', (_, res) => {
+  res.status(200).json({ status: 'ok' })
 })
 
 const start = async (): Promise<void> => {
@@ -43,8 +48,8 @@ const start = async (): Promise<void> => {
   }
 
   if (process.env.NEXT_BUILD) {
-    app.listen(PORT, async () => {
-      payload.logger.info(`Next.js is now building...`)
+    app.listen(PORT, HOST, async () => {
+      payload.logger.info('Next.js is now building...')
       // @ts-expect-error
       await nextBuild(path.join(__dirname, '../'))
       process.exit()
@@ -66,8 +71,9 @@ const start = async (): Promise<void> => {
 
   nextApp.prepare().then(() => {
     payload.logger.info('Starting Next.js...')
-    app.listen(PORT, async () => {
+    app.listen(PORT, HOST, async () => {
       payload.logger.info(`Next.js App URL: ${process.env.PAYLOAD_PUBLIC_SERVER_URL}`)
+      payload.logger.info(`Listening on http://${HOST}:${PORT}`)
     })
   })
 }
