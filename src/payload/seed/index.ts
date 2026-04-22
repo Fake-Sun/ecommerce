@@ -13,7 +13,6 @@ import { product3 } from './product-3'
 import { productsPage } from './products-page'
 
 const collections = ['categories', 'media', 'pages', 'products']
-const globals = ['header', 'settings', 'footer']
 
 // Next.js revalidation errors are normal when seeding the database without a server running
 // i.e. running `yarn seed` locally instead of using the admin UI within an active app
@@ -36,36 +35,48 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   payload.logger.info(`— Clearing collections and globals...`)
 
-  // clear the database
   await Promise.all([
     ...collections.map(async collection =>
       payload.delete({
         collection: collection as 'media',
         where: {},
       }),
-    ), // eslint-disable-line function-paren-newline
-    ...globals.map(async global =>
-      payload.updateGlobal({
-        slug: global as 'header',
-        data: {},
-      }),
-    ), // eslint-disable-line function-paren-newline
+    ),
+    payload.updateGlobal({
+      slug: 'header',
+      data: {
+        navItems: [],
+      },
+    }),
+    payload.updateGlobal({
+      slug: 'settings',
+      data: {
+        productsPage: null,
+      },
+    }),
+    payload.updateGlobal({
+      slug: 'footer',
+      data: {
+        copyright: 'Payload CMS',
+        navItems: [],
+      },
+    }),
   ])
 
   payload.logger.info(`— Seeding media...`)
 
   const [image1Doc, image2Doc, image3Doc] = await Promise.all([
-    await payload.create({
+    payload.create({
       collection: 'media',
       filePath: path.resolve(__dirname, 'image-1.jpg'),
       data: image1,
     }),
-    await payload.create({
+    payload.create({
       collection: 'media',
       filePath: path.resolve(__dirname, 'image-2.jpg'),
       data: image2,
     }),
-    await payload.create({
+    payload.create({
       collection: 'media',
       filePath: path.resolve(__dirname, 'image-3.jpg'),
       data: image3,
@@ -85,19 +96,19 @@ export const seed = async (payload: Payload): Promise<void> => {
   payload.logger.info(`— Seeding categories...`)
 
   const [apparelCategory, ebooksCategory, coursesCategory] = await Promise.all([
-    await payload.create({
+    payload.create({
       collection: 'categories',
       data: {
         title: 'Apparel',
       },
     }),
-    await payload.create({
+    payload.create({
       collection: 'categories',
       data: {
         title: 'E-books',
       },
     }),
-    await payload.create({
+    payload.create({
       collection: 'categories',
       data: {
         title: 'Online courses',
@@ -139,24 +150,22 @@ export const seed = async (payload: Payload): Promise<void> => {
     ),
   })
 
-  // update each product with related products
-
   await Promise.all([
-    await payload.update({
+    payload.update({
       collection: 'products',
       id: product1Doc.id,
       data: {
         relatedProducts: [product2Doc.id, product3Doc.id],
       },
     }),
-    await payload.update({
+    payload.update({
       collection: 'products',
       id: product2Doc.id,
       data: {
         relatedProducts: [product1Doc.id, product3Doc.id],
       },
     }),
-    await payload.update({
+    payload.update({
       collection: 'products',
       id: product3Doc.id,
       data: {
@@ -213,6 +222,27 @@ export const seed = async (payload: Payload): Promise<void> => {
   await payload.updateGlobal({
     slug: 'header',
     data: {
+      navItems: [
+        {
+          link: {
+            type: 'reference',
+            reference: {
+              relationTo: 'pages',
+              value: productsPageDoc.id,
+            },
+            label: 'Shop',
+          },
+        },
+      ],
+    },
+  })
+
+  payload.logger.info(`— Seeding footer...`)
+
+  await payload.updateGlobal({
+    slug: 'footer',
+    data: {
+      copyright: 'Payload CMS',
       navItems: [
         {
           link: {
