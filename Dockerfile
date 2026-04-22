@@ -34,4 +34,4 @@ ENV PAYLOAD_CONFIG_PATH=dist/payload/payload.config.js
 
 EXPOSE 3000
 
-CMD ["node", "dist/server.js"]
+CMD ["node", "dist/server.default.js"]
