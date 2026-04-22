@@ -35,53 +35,54 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   payload.logger.info(`— Clearing collections and globals...`)
 
-  await Promise.all([
-    ...collections.map(async collection => {
-      return payload.delete({
-        collection: collection as 'media',
-        where: {},
-      })
-    }),
-    payload.updateGlobal({
-      slug: 'header',
-      data: {
-        navItems: [],
-      },
-    }),
-    payload.updateGlobal({
-      slug: 'settings',
-      data: {
-        productsPage: null,
-      },
-    }),
-    payload.updateGlobal({
-      slug: 'footer',
-      data: {
-        copyright: 'Payload CMS',
-        navItems: [],
-      },
-    }),
-  ])
+  for (const collection of collections) {
+    await payload.delete({
+      collection: collection as 'media',
+      where: {},
+    })
+  }
+
+  await payload.updateGlobal({
+    slug: 'header',
+    data: {
+      navItems: [],
+    },
+  })
+
+  await payload.updateGlobal({
+    slug: 'settings',
+    data: {
+      productsPage: null,
+    },
+  })
+
+  await payload.updateGlobal({
+    slug: 'footer',
+    data: {
+      copyright: 'Payload CMS',
+      navItems: [],
+    },
+  })
 
   payload.logger.info(`— Seeding media...`)
 
-  const [image1Doc, image2Doc, image3Doc] = await Promise.all([
-    payload.create({
-      collection: 'media',
-      filePath: path.resolve(__dirname, 'image-1.jpg'),
-      data: image1,
-    }),
-    payload.create({
-      collection: 'media',
-      filePath: path.resolve(__dirname, 'image-2.jpg'),
-      data: image2,
-    }),
-    payload.create({
-      collection: 'media',
-      filePath: path.resolve(__dirname, 'image-3.jpg'),
-      data: image3,
-    }),
-  ])
+  const image1Doc = await payload.create({
+    collection: 'media',
+    filePath: path.resolve(__dirname, 'image-1.jpg'),
+    data: image1,
+  })
+
+  const image2Doc = await payload.create({
+    collection: 'media',
+    filePath: path.resolve(__dirname, 'image-2.jpg'),
+    data: image2,
+  })
+
+  const image3Doc = await payload.create({
+    collection: 'media',
+    filePath: path.resolve(__dirname, 'image-3.jpg'),
+    data: image3,
+  })
 
   let image1ID = image1Doc.id
   let image2ID = image2Doc.id
@@ -95,26 +96,26 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   payload.logger.info(`— Seeding categories...`)
 
-  const [apparelCategory, ebooksCategory, coursesCategory] = await Promise.all([
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Apparel',
-      },
-    }),
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'E-books',
-      },
-    }),
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Online courses',
-      },
-    }),
-  ])
+  const apparelCategory = await payload.create({
+    collection: 'categories',
+    data: {
+      title: 'Apparel',
+    },
+  })
+
+  const ebooksCategory = await payload.create({
+    collection: 'categories',
+    data: {
+      title: 'E-books',
+    },
+  })
+
+  const coursesCategory = await payload.create({
+    collection: 'categories',
+    data: {
+      title: 'Online courses',
+    },
+  })
 
   payload.logger.info(`— Seeding products...`)
 
@@ -150,29 +151,29 @@ export const seed = async (payload: Payload): Promise<void> => {
     ),
   })
 
-  await Promise.all([
-    payload.update({
-      collection: 'products',
-      id: product1Doc.id,
-      data: {
-        relatedProducts: [product2Doc.id, product3Doc.id],
-      },
-    }),
-    payload.update({
-      collection: 'products',
-      id: product2Doc.id,
-      data: {
-        relatedProducts: [product1Doc.id, product3Doc.id],
-      },
-    }),
-    payload.update({
-      collection: 'products',
-      id: product3Doc.id,
-      data: {
-        relatedProducts: [product1Doc.id, product2Doc.id],
-      },
-    }),
-  ])
+  await payload.update({
+    collection: 'products',
+    id: product1Doc.id,
+    data: {
+      relatedProducts: [product2Doc.id, product3Doc.id],
+    },
+  })
+
+  await payload.update({
+    collection: 'products',
+    id: product2Doc.id,
+    data: {
+      relatedProducts: [product1Doc.id, product3Doc.id],
+    },
+  })
+
+  await payload.update({
+    collection: 'products',
+    id: product3Doc.id,
+    data: {
+      relatedProducts: [product1Doc.id, product2Doc.id],
+    },
+  })
 
   payload.logger.info(`— Seeding products page...`)
 
