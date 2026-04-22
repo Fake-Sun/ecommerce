@@ -65,6 +65,7 @@ export const CollectionArchive: React.FC<Props> = props => {
   const [error, setError] = useState<string | undefined>(undefined)
   const scrollRef = useRef<HTMLDivElement>(null)
   const hasHydrated = useRef(false)
+  const resultCache = useRef(new Map<string, Result>())
   const [page, setPage] = useState(1)
 
   const scrollToRef = useCallback(() => {
@@ -106,6 +107,33 @@ export const CollectionArchive: React.FC<Props> = props => {
       { encode: false },
     )
 
+    if (
+      !hasHydrated.current &&
+      page === 1 &&
+      (!categoryFilters || categoryFilters.length === 0) &&
+      results.docs.length > 0
+    ) {
+      hasHydrated.current = true
+      resultCache.current.set(searchQuery, results)
+      return
+    }
+
+    const cachedResult = resultCache.current.get(searchQuery)
+
+    if (cachedResult) {
+      hasHydrated.current = true
+      setResults(cachedResult)
+      setIsLoading(false)
+      setError(undefined)
+
+      if (typeof onResultChange === 'function') {
+        onResultChange(cachedResult)
+      }
+
+      clearTimeout(timer)
+      return
+    }
+
     const makeRequest = async () => {
       try {
         const req = await fetch(
@@ -120,8 +148,10 @@ export const CollectionArchive: React.FC<Props> = props => {
         const { docs } = json as { docs: Product[] }
 
         if (docs && Array.isArray(docs)) {
+          resultCache.current.set(searchQuery, json)
           setResults(json)
           setIsLoading(false)
+          setError(undefined)
           if (typeof onResultChange === 'function') {
             onResultChange(json)
           }

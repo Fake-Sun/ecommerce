@@ -1,6 +1,16 @@
 import type { PayloadHandler } from 'payload/config'
 import type { Where } from 'payload/types'
 
+interface ProductListImage {
+  id: string
+  alt?: string | null
+  filename?: string | null
+  url?: string | null
+  mimeType?: string | null
+  width?: number | null
+  height?: number | null
+}
+
 const toPositiveInt = (value: unknown, fallback: number): number => {
   const parsed = Number(value)
 
@@ -43,34 +53,88 @@ export const productList: PayloadHandler = async (req, res) => {
 
     const result = await req.payload.find({
       collection: 'products',
-      depth: 1,
+      depth: 0,
       sort,
       page,
       limit,
       where,
     })
 
-    const docs = result.docs.map(doc => ({
-      id: doc.id,
-      slug: doc.slug,
-      title: doc.title,
-      meta: {
-        description: doc.meta?.description,
-        image:
-          doc.meta?.image && typeof doc.meta.image !== 'string'
-            ? {
-                id: doc.meta.image.id,
-                alt: doc.meta.image.alt,
-                filename: doc.meta.image.filename,
-                url: doc.meta.image.url,
-                mimeType: doc.meta.image.mimeType,
-                width: doc.meta.image.width,
-                height: doc.meta.image.height,
-              }
-            : null,
-      },
-      priceJSON: doc.priceJSON,
-    }))
+    const mediaIDs = Array.from(
+      new Set(
+        result.docs
+          .map(doc => {
+            const image = doc.meta?.image
+
+            if (!image) return null
+            if (typeof image === 'string') return image
+            if ('id' in image && image.id) return String(image.id)
+
+            return null
+          })
+          .filter(Boolean) as string[],
+      ),
+    )
+
+    const mediaMap = new Map<string, ProductListImage>()
+
+    if (mediaIDs.length > 0) {
+      const mediaResult = await req.payload.find({
+        collection: 'media',
+        depth: 0,
+        limit: mediaIDs.length,
+        where: {
+          id: {
+            in: mediaIDs,
+          },
+        },
+      })
+
+      mediaResult.docs.forEach(mediaDoc => {
+        mediaMap.set(String(mediaDoc.id), {
+          id: String(mediaDoc.id),
+          alt: mediaDoc.alt,
+          filename: mediaDoc.filename,
+          url: mediaDoc.url,
+          mimeType: mediaDoc.mimeType,
+          width: mediaDoc.width,
+          height: mediaDoc.height,
+        })
+      })
+    }
+
+    const docs = result.docs.map(doc => {
+      const directImage: ProductListImage | null =
+        doc.meta?.image && typeof doc.meta.image !== 'string'
+          ? {
+              id: String(doc.meta.image.id),
+              alt: doc.meta.image.alt,
+              filename: doc.meta.image.filename,
+              url: doc.meta.image.url,
+              mimeType: doc.meta.image.mimeType,
+              width: doc.meta.image.width,
+              height: doc.meta.image.height,
+            }
+          : null
+
+      const imageID =
+        typeof doc.meta?.image === 'string'
+          ? doc.meta.image
+          : doc.meta?.image && 'id' in doc.meta.image
+          ? String(doc.meta.image.id)
+          : null
+
+      return {
+        id: doc.id,
+        slug: doc.slug,
+        title: doc.title,
+        meta: {
+          description: doc.meta?.description,
+          image: directImage || (imageID ? mediaMap.get(imageID) || null : null),
+        },
+        priceJSON: doc.priceJSON,
+      }
+    })
 
     res.status(200).json({
       docs,
