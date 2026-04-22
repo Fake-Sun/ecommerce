@@ -35,6 +35,7 @@ export const Image: React.FC<MediaProps> = props => {
       width: fullWidth,
       height: fullHeight,
       filename: fullFilename,
+      url: resourceURL,
       alt: altFromResource,
     } = resource
 
@@ -44,7 +45,10 @@ export const Image: React.FC<MediaProps> = props => {
 
     const filename = fullFilename
 
-    src = getMediaURL(filename)
+    src = getMediaURL({
+      filename,
+      url: resourceURL,
+    })
   }
 
   const sizes = Object.entries(breakpoints)

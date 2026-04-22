@@ -9,7 +9,11 @@ export const API_URL = trimURL(
     process.env.PAYLOAD_PUBLIC_SERVER_URL,
 )
 
-export const getMediaURL = (filename?: string | null): string => {
+export const getMediaURL = (args?: { filename?: string | null; url?: string | null }): string => {
+  const url = args?.url
+  const filename = args?.filename
+
+  if (url) return url
   if (!filename) return ''
 
   if (!API_URL) {

@@ -10,7 +10,13 @@ import { getMediaURL } from '../../_utilities/getServerURL'
 import classes from './index.module.scss'
 
 export const CustomHero: React.FC<Page['hero']> = ({ richText, media, links }) => {
-  const mediaUrl = media && typeof media !== 'string' && getMediaURL(media.filename)
+  const mediaUrl =
+    media &&
+    typeof media !== 'string' &&
+    getMediaURL({
+      filename: media.filename,
+      url: media.url,
+    })
 
   return (
     <section className={classes.hero}>
