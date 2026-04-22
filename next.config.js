@@ -5,6 +5,8 @@ const apiURL =
   process.env.PAYLOAD_PUBLIC_SERVER_URL ||
   'http://localhost:3000'
 const parsedAPIURL = new URL(apiURL)
+const r2PublicURL = process.env.R2_PUBLIC_URL
+const parsedR2PublicURL = r2PublicURL ? new URL(r2PublicURL) : null
 
 const nextConfig = {
   reactStrictMode: true,
@@ -16,6 +18,16 @@ const nextConfig = {
         port: parsedAPIURL.port,
         pathname: '/media/**',
       },
+      ...(parsedR2PublicURL
+        ? [
+            {
+              protocol: parsedR2PublicURL.protocol.replace(':', ''),
+              hostname: parsedR2PublicURL.hostname,
+              port: parsedR2PublicURL.port,
+              pathname: '/**',
+            },
+          ]
+        : []),
     ],
   },
 }

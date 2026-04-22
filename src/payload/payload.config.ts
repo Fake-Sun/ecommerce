@@ -1,6 +1,8 @@
 import { webpackBundler } from '@payloadcms/bundler-webpack' // bundler-import
 import { mongooseAdapter } from '@payloadcms/db-mongodb' // database-adapter-import
 import { payloadCloud } from '@payloadcms/plugin-cloud'
+import { cloudStorage } from '@payloadcms/plugin-cloud-storage'
+import { s3Adapter } from '@payloadcms/plugin-cloud-storage/s3'
 import nestedDocs from '@payloadcms/plugin-nested-docs'
 import redirects from '@payloadcms/plugin-redirects'
 import seo from '@payloadcms/plugin-seo'
@@ -36,6 +38,20 @@ const generateTitle: GenerateTitle = () => {
 
 const mockModulePath = path.resolve(__dirname, './emptyModuleMock.js')
 const isStripeTestKey = process.env.PAYLOAD_PUBLIC_STRIPE_IS_TEST_KEY === 'true'
+const isR2Enabled = Boolean(
+  process.env.R2_BUCKET &&
+    process.env.R2_ACCESS_KEY_ID &&
+    process.env.R2_SECRET_ACCESS_KEY &&
+    process.env.R2_ENDPOINT &&
+    process.env.R2_PUBLIC_URL,
+)
+
+const r2FileURL = ({ filename, prefix = '' }: { filename: string; prefix?: string }): string => {
+  const key = path.posix.join(prefix, filename)
+  const publicURL = (process.env.R2_PUBLIC_URL || '').replace(/\/$/, '')
+
+  return `${publicURL}/${key}`
+}
 
 dotenv.config({
   path: path.resolve(__dirname, '../../.env'),
@@ -148,6 +164,27 @@ export default buildConfig({
     }),
     nestedDocs({
       collections: ['categories'],
+    }),
+    cloudStorage({
+      enabled: isR2Enabled,
+      collections: {
+        media: {
+          adapter: s3Adapter({
+            bucket: process.env.R2_BUCKET || '',
+            config: {
+              credentials: {
+                accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+                secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+              },
+              endpoint: process.env.R2_ENDPOINT,
+              forcePathStyle: true,
+              region: 'auto',
+            },
+          }),
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) => r2FileURL({ filename, prefix }),
+        },
+      },
     }),
     seo({
       collections: ['pages', 'products'],

@@ -25,9 +25,12 @@
     "serve:full": "cross-env NODE_OPTIONS=--max_old_space_size=1024 PAYLOAD_CONFIG_PATH=dist/payload/payload.config.js NODE_ENV=production node dist/server.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1034.0",
+    "@aws-sdk/lib-storage": "^3.1034.0",
     "@payloadcms/bundler-webpack": "^1.0.0",
     "@payloadcms/db-mongodb": "^1.0.0",
     "@payloadcms/plugin-cloud": "^3.0.0",
+    "@payloadcms/plugin-cloud-storage": "1.2.2",
     "@payloadcms/plugin-nested-docs": "^1.0.8",
     "@payloadcms/plugin-redirects": "^1.0.0",
     "@payloadcms/plugin-seo": "^1.0.10",
