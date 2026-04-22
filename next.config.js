@@ -1,4 +1,4 @@
-/** @type {import(''next'').NextConfig} */
+/** @type {import('next').NextConfig} */
 const apiURL =
   process.env.NEXT_PUBLIC_API_URL ||
   process.env.NEXT_PUBLIC_SERVER_URL ||

@@ -19,8 +19,8 @@ RUN yarn install --immutable
 # Copy the rest of the app
 COPY . .
 
-# Build everything
-RUN yarn build
+# Build the backend-only Railway runtime
+RUN yarn build:backend
 
 # Final image
 FROM node:22-slim

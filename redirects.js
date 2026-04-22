@@ -1,16 +1,14 @@
-// Note: This will not work in dev mode and will throw an error upon startup
-// This is because the Payload APIs are not yet running when the Next.js server starts
-// This is not a problem in production as Payload is booted up before building Next.js
-// For this reason the errors can be silently ignored in dev mode
+const serverURL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL || ''
+const siteURL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_SERVER_URL || ''
 
 module.exports = async () => {
   const internetExplorerRedirect = {
-    source: '/:path((?!ie-incompatible.html$).*)', // all pages except the incompatibility page
+    source: '/:path((?!ie-incompatible.html$).*)',
     has: [
       {
         type: 'header',
         key: 'user-agent',
-        value: '(.*Trident.*)', // all ie browsers
+        value: '(.*Trident.*)',
       },
     ],
     permanent: false,
@@ -18,10 +16,7 @@ module.exports = async () => {
   }
 
   try {
-    const redirectsRes = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/redirects?limit=1000&depth=1`,
-    )
-
+    const redirectsRes = await fetch(`${serverURL}/api/redirects?limit=1000&depth=1`)
     const redirectsData = await redirectsRes.json()
     const { docs } = redirectsData
 
@@ -31,17 +26,14 @@ module.exports = async () => {
       docs.forEach(doc => {
         const { from, to: { type, url, reference } = {} } = doc
 
-        let source = from
-          .replace(process.env.NEXT_PUBLIC_SERVER_URL, '')
-          .split('?')[0]
-          .toLowerCase()
+        let source = from.replace(siteURL, '').split('?')[0].toLowerCase()
 
-        if (source.endsWith('/')) source = source.slice(0, -1) // a trailing slash will break this redirect
+        if (source.endsWith('/')) source = source.slice(0, -1)
 
         let destination = '/'
 
         if (type === 'custom' && url) {
-          destination = url.replace(process.env.NEXT_PUBLIC_SERVER_URL, '')
+          destination = url.replace(siteURL, '')
         }
 
         if (
@@ -49,7 +41,7 @@ module.exports = async () => {
           typeof reference.value === 'object' &&
           reference?.value?._status === 'published'
         ) {
-          destination = `${process.env.NEXT_PUBLIC_SERVER_URL}/${
+          destination = `${siteURL}/${
             reference.relationTo !== 'pages' ? `${reference.relationTo}/` : ''
           }${reference.value.slug}`
         }
@@ -63,17 +55,13 @@ module.exports = async () => {
         if (source.startsWith('/') && destination && source !== destination) {
           return dynamicRedirects.push(redirect)
         }
-
-        return
       })
     }
 
-    const redirects = [internetExplorerRedirect, ...dynamicRedirects]
-
-    return redirects
+    return [internetExplorerRedirect, ...dynamicRedirects]
   } catch (error) {
     if (process.env.NODE_ENV === 'production') {
-      console.error(`Error configuring redirects: ${error}`) // eslint-disable-line no-console
+      console.error(`Error configuring redirects: ${error}`)
     }
 
     return []
