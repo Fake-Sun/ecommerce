@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Button } from '../../../_components/Button'
 import { Input } from '../../../_components/Input'
 import { Message } from '../../../_components/Message'
+import { getAPIURL } from '../../../_utilities/getServerURL'
 
 import classes from './index.module.scss'
 
@@ -25,18 +26,13 @@ export const RecoverPasswordForm: React.FC = () => {
   } = useForm<FormData>()
 
   const onSubmit = useCallback(async (data: FormData) => {
-    const response = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL
-      }/api/users/forgot-password`,
-      {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    const response = await fetch(getAPIURL('/api/users/forgot-password'), {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
       },
-    )
+    })
 
     if (response.ok) {
       setSuccess(true)

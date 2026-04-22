@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Page } from '../../../payload/payload-types'
 import { PRODUCT_PAYWALL } from '../../_graphql/products'
 import { useAuth } from '../../_providers/Auth'
+import { getAPIURL } from '../../_utilities/getServerURL'
 import { Blocks } from '../Blocks'
 import { Gutter } from '../Gutter'
 import { LoadingShimmer } from '../LoadingShimmer'
@@ -35,22 +36,19 @@ export const PaywallBlocks: React.FC<{
       setIsLoading(true)
 
       try {
-        const paywall = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL}/api/graphql`,
-          {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              query: PRODUCT_PAYWALL,
-              variables: {
-                slug: productSlug,
-              },
-            }),
+        const paywall = await fetch(getAPIURL('/api/graphql'), {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        )
+          body: JSON.stringify({
+            query: PRODUCT_PAYWALL,
+            variables: {
+              slug: productSlug,
+            },
+          }),
+        })
           ?.then(res => res.json())
           ?.then(res => res?.data?.Products.docs[0]?.paywall)
 

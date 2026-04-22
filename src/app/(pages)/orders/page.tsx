@@ -10,6 +10,7 @@ import { HR } from '../../_components/HR'
 import { RenderParams } from '../../_components/RenderParams'
 import { formatDateTime } from '../../_utilities/formatDateTime'
 import { getMeUser } from '../../_utilities/getMeUser'
+import { getAPIURL } from '../../_utilities/getServerURL'
 import { mergeOpenGraph } from '../../_utilities/mergeOpenGraph'
 
 import classes from './index.module.scss'
@@ -26,16 +27,13 @@ export default async function Orders() {
   let orders: Order[] | null = null
 
   try {
-    orders = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL}/api/orders`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `JWT ${token}`,
-        },
-        cache: 'no-store',
+    orders = await fetch(getAPIURL('/api/orders'), {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `JWT ${token}`,
       },
-    )
+      cache: 'no-store',
+    })
       ?.then(async res => {
         if (!res.ok) notFound()
         const json = await res.json()

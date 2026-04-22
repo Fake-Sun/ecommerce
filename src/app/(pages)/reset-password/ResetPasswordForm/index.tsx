@@ -8,6 +8,7 @@ import { Button } from '../../../_components/Button'
 import { Input } from '../../../_components/Input'
 import { Message } from '../../../_components/Message'
 import { useAuth } from '../../../_providers/Auth'
+import { getAPIURL } from '../../../_utilities/getServerURL'
 
 import classes from './index.module.scss'
 
@@ -33,18 +34,13 @@ export const ResetPasswordForm: React.FC = () => {
 
   const onSubmit = useCallback(
     async (data: FormData) => {
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL
-        }/api/users/reset-password`,
-        {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await fetch(getAPIURL('/api/users/reset-password'), {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
         },
-      )
+      })
 
       if (response.ok) {
         const json = await response.json()

@@ -10,6 +10,7 @@ import { Media } from '../../../_components/Media'
 import { Price } from '../../../_components/Price'
 import { formatDateTime } from '../../../_utilities/formatDateTime'
 import { getMeUser } from '../../../_utilities/getMeUser'
+import { getAPIURL } from '../../../_utilities/getServerURL'
 import { mergeOpenGraph } from '../../../_utilities/mergeOpenGraph'
 
 import classes from './index.module.scss'
@@ -26,17 +27,12 @@ export default async function Order({ params }: { params: { id: string } }) {
   let order: Order | null = null
 
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${
-        params.id
-      }`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `JWT ${token}`,
-        },
+    const res = await fetch(getAPIURL(`/api/orders/${params.id}`), {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `JWT ${token}`,
       },
-    )
+    })
 
     const json = await res.json()
     if (!res.ok || json?.error || json?.errors) notFound()
@@ -93,11 +89,7 @@ export default async function Order({ params }: { params: { id: string } }) {
                     {!product.stripeProductID && (
                       <p className={classes.warning}>
                         This product is not yet connected to Stripe. To link this product,{' '}
-                        <a
-                          href={`${
-                            process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL
-                          }/admin/collections/products/${product.id}`}
-                        >
+                        <a href={getAPIURL(`/admin/collections/products/${product.id}`)}>
                           edit this product in the admin panel
                         </a>
                         .
