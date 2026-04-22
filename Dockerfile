@@ -19,8 +19,8 @@ RUN yarn install --immutable
 # Copy the rest of the app
 COPY . .
 
-# Build the backend-only Railway runtime
-RUN yarn build:backend
+# Build the full combined Railway runtime
+RUN yarn build
 
 # Final image
 FROM node:22-slim
@@ -34,4 +34,4 @@ ENV PAYLOAD_CONFIG_PATH=dist/payload/payload.config.js
 
 EXPOSE 3000
 
-CMD ["node", "dist/server.default.js"]
+CMD ["node", "dist/server.js"]

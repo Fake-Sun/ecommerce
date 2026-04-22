@@ -1,10 +1,11 @@
 {
   "build": {
     "env": [
-      "NEXT_PUBLIC_API_URL",
       "NEXT_PUBLIC_SITE_URL",
+      "NEXT_PUBLIC_SERVER_URL",
       "PAYLOAD_PUBLIC_SERVER_URL",
-      "PAYLOAD_PUBLIC_SITE_URL"
+      "PAYLOAD_PUBLIC_SITE_URL",
+      "R2_PUBLIC_URL"
     ]
   }
 }
