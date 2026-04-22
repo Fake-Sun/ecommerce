@@ -128,6 +128,12 @@ export const productList: PayloadHandler = async (req, res) => {
         id: doc.id,
         slug: doc.slug,
         title: doc.title,
+        createdAt: doc.createdAt,
+        categories: Array.isArray(doc.categories)
+          ? doc.categories.map(category => {
+              return typeof category === 'string' ? category : String(category.id)
+            })
+          : [],
         meta: {
           description: doc.meta?.description,
           image: directImage || (imageID ? mediaMap.get(imageID) || null : null),
