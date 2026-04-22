@@ -36,12 +36,12 @@ export const seed = async (payload: Payload): Promise<void> => {
   payload.logger.info(`— Clearing collections and globals...`)
 
   await Promise.all([
-    ...collections.map(async collection =>
-      payload.delete({
+    ...collections.map(async collection => {
+      return payload.delete({
         collection: collection as 'media',
         where: {},
-      }),
-    ),
+      })
+    }),
     payload.updateGlobal({
       slug: 'header',
       data: {
