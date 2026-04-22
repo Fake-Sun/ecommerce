@@ -10,6 +10,7 @@ import { checkUserPurchases } from './access/checkUserPurchases'
 import { beforeProductChange } from './hooks/beforeChange'
 import { deleteProductFromCarts } from './hooks/deleteProductFromCarts'
 import { revalidateProduct } from './hooks/revalidateProduct'
+import { revalidateProductDelete } from './hooks/revalidateProductDelete'
 import { ProductSelect } from './ui/ProductSelect'
 
 const Products: CollectionConfig = {
@@ -30,7 +31,7 @@ const Products: CollectionConfig = {
   hooks: {
     beforeChange: [beforeProductChange],
     afterChange: [revalidateProduct],
-    afterDelete: [deleteProductFromCarts],
+    afterDelete: [deleteProductFromCarts, revalidateProductDelete],
   },
   versions: {
     drafts: true,

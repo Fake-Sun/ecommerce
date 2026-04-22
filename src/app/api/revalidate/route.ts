@@ -10,18 +10,18 @@ export async function GET(request: NextRequest): Promise<Response> {
   if (
     !secret ||
     secret !== process.env.NEXT_PRIVATE_REVALIDATION_KEY ||
-    typeof collection !== 'string' ||
-    typeof slug !== 'string'
+    typeof collection !== 'string'
   ) {
     // Do not indicate that the revalidation key is incorrect in the response
     // This will protect this API route from being exploited
     return new Response('Invalid request', { status: 400 })
   }
 
-  if (typeof collection === 'string' && typeof slug === 'string') {
+  revalidateTag(collection)
+
+  if (typeof slug === 'string' && slug.length > 0) {
     revalidateTag(`${collection}_${slug}`)
-    return NextResponse.json({ revalidated: true, now: Date.now() })
   }
 
-  return NextResponse.json({ revalidated: false, now: Date.now() })
+  return NextResponse.json({ revalidated: true, now: Date.now() })
 }
