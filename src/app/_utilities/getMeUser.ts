@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import type { User } from '../../payload/payload-types'
+import { getAPIURL } from './getServerURL'
 
 export const getMeUser = async (args?: {
   nullUserRedirect?: string
@@ -14,14 +15,11 @@ export const getMeUser = async (args?: {
   const cookieStore = await cookies()
   const token = cookieStore.get('payload-token')?.value
 
-  const meUserReq = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
-    {
-      headers: {
-        Authorization: `JWT ${token}`,
-      },
+  const meUserReq = await fetch(getAPIURL('/api/users/me'), {
+    headers: {
+      Authorization: `JWT ${token}`,
     },
-  )
+  })
 
   const {
     user,

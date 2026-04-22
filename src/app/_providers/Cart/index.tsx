@@ -12,6 +12,7 @@ import React, {
 import { useDebouncedCallback } from 'use-debounce'
 
 import { Product, User } from '../../../payload/payload-types'
+import { getAPIURL } from '../../_utilities/getServerURL'
 import { useAuth } from '../Auth'
 import { CartItem, cartReducer } from './reducer'
 
@@ -66,11 +67,7 @@ export const CartProvider = props => {
         if (parsedCart?.items && parsedCart?.items?.length > 0) {
           const initialCart = await Promise.all(
             parsedCart.items.map(async ({ product, quantity }) => {
-              const res = await fetch(
-                `${
-                  process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL
-                }/api/products/${product}`,
-              )
+              const res = await fetch(getAPIURL(`/api/products/${product}`))
               const data = await res.json()
               return {
                 product: data,
@@ -125,17 +122,12 @@ export const CartProvider = props => {
     }
 
     try {
-      const req = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${
-          user.id
-        }`,
-        {
-          credentials: 'include',
-          method: 'PATCH',
-          body: JSON.stringify({ cart }),
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
+      const req = await fetch(getAPIURL(`/api/users/${user.id}`), {
+        credentials: 'include',
+        method: 'PATCH',
+        body: JSON.stringify({ cart }),
+        headers: { 'Content-Type': 'application/json' },
+      })
 
       if (req.ok) {
         localStorage.setItem('cart', '[]')

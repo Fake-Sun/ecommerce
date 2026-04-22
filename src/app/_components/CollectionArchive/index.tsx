@@ -6,6 +6,7 @@ import qs from 'qs'
 import { Category, Product } from '../../../payload/payload-types'
 import type { ArchiveBlockProps } from '../../_blocks/ArchiveBlock/types'
 import { useFilter } from '../../_providers/Filter'
+import { getAPIURL } from '../../_utilities/getServerURL'
 import { Card } from '../Card'
 import { PageRange } from '../PageRange'
 import { Pagination } from '../Pagination'
@@ -136,11 +137,7 @@ export const CollectionArchive: React.FC<Props> = props => {
 
     const makeRequest = async () => {
       try {
-        const req = await fetch(
-          `${
-            process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL
-          }/api/products-list?${searchQuery}`,
-        )
+        const req = await fetch(`${getAPIURL('/api/products-list')}?${searchQuery}`)
         const json = await req.json()
         clearTimeout(timer)
         hasHydrated.current = true
