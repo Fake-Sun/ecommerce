@@ -95,21 +95,13 @@ export const CollectionArchive: React.FC<Props> = props => {
     const searchQuery = qs.stringify(
       {
         sort,
-        where: {
-          ...(categoryFilters && categoryFilters?.length > 0
-            ? {
-                categories: {
-                  in:
-                    typeof categoryFilters === 'string'
-                      ? [categoryFilters]
-                      : categoryFilters.map((cat: string) => cat).join(','),
-                },
-              }
-            : {}),
-        },
+        ...(categoryFilters && categoryFilters?.length > 0
+          ? {
+              categories: categoryFilters.join(','),
+            }
+          : {}),
         limit,
         page,
-        depth: 1,
       },
       { encode: false },
     )
@@ -119,7 +111,7 @@ export const CollectionArchive: React.FC<Props> = props => {
         const req = await fetch(
           `${
             process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SERVER_URL
-          }/api/${relationTo}?${searchQuery}`,
+          }/api/products-list?${searchQuery}`,
         )
         const json = await req.json()
         clearTimeout(timer)

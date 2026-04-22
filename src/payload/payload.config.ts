@@ -21,6 +21,7 @@ import BeforeDashboard from './components/BeforeDashboard'
 import BeforeLogin from './components/BeforeLogin'
 import { createPaymentIntent } from './endpoints/create-payment-intent'
 import { customersProxy } from './endpoints/customers'
+import { productList } from './endpoints/product-list'
 import { productsProxy } from './endpoints/products'
 import { seed } from './endpoints/seed'
 import { Footer } from './globals/Footer'
@@ -66,6 +67,7 @@ export default buildConfig({
             [path.resolve(__dirname, 'collections/Users/endpoints/customer')]: mockModulePath,
             [path.resolve(__dirname, 'endpoints/create-payment-intent')]: mockModulePath,
             [path.resolve(__dirname, 'endpoints/customers')]: mockModulePath,
+            [path.resolve(__dirname, 'endpoints/product-list')]: mockModulePath,
             [path.resolve(__dirname, 'endpoints/products')]: mockModulePath,
             [path.resolve(__dirname, 'endpoints/seed')]: mockModulePath,
             stripe: mockModulePath,
@@ -115,6 +117,11 @@ export default buildConfig({
       path: '/stripe/products',
       method: 'get',
       handler: productsProxy,
+    },
+    {
+      path: '/products-list',
+      method: 'get',
+      handler: productList,
     },
     // The seed endpoint is used to populate the database with some example data
     // You should delete this endpoint before deploying your site to production
