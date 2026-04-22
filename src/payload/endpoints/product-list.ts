@@ -62,6 +62,7 @@ export const productList: PayloadHandler = async (req, res) => {
                 id: doc.meta.image.id,
                 alt: doc.meta.image.alt,
                 filename: doc.meta.image.filename,
+                url: doc.meta.image.url,
                 mimeType: doc.meta.image.mimeType,
                 width: doc.meta.image.width,
                 height: doc.meta.image.height,
