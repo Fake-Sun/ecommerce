@@ -19,8 +19,9 @@ export const revalidate = async (args: {
     if (res.ok) {
       payload.logger.info(`Revalidated page '${slug}' in collection '${collection}'`)
     } else {
+      const body = await res.text()
       payload.logger.error(
-        `Error revalidating page '${slug}' in collection '${collection}': ${res}`,
+        `Error revalidating page '${slug}' in collection '${collection}': ${res.status} ${res.statusText} ${body}`,
       )
     }
   } catch (err: unknown) {
