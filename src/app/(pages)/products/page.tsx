@@ -17,16 +17,19 @@ const Products = async () => {
   const { isEnabled: isDraftMode } = await draftMode()
 
   let page: Page | null = null
-  let categories: Category[] | null = null
+  let categories: Category[] = []
 
   try {
-    page = await fetchDoc<Page>({
-      collection: 'pages',
-      slug: 'products',
-      draft: isDraftMode,
-    })
-
-    categories = await fetchDocs<Category>('categories')
+    const [pageResult, categoryResults] = await Promise.all([
+      fetchDoc<Page>({
+        collection: 'pages',
+        slug: 'products',
+        draft: isDraftMode,
+      }),
+      fetchDocs<Category>('categories'),
+    ])
+    page = pageResult
+    categories = categoryResults || []
   } catch (error) {
     console.log(error)
   }

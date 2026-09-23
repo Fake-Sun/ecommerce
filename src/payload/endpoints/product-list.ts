@@ -15,7 +15,7 @@ const toPositiveInt = (value: unknown, fallback: number): number => {
   const parsed = Number(value)
 
   if (Number.isFinite(parsed) && parsed > 0) {
-    return parsed
+    return Math.max(1, Math.floor(parsed))
   }
 
   return fallback
@@ -37,28 +37,30 @@ const normalizeCategoryFilter = (value: unknown): string[] => {
 }
 
 export const productList: PayloadHandler = async (req, res) => {
+  const startedAt = Date.now()
   try {
     const page = toPositiveInt(req.query.page, 1)
-    const limit = toPositiveInt(req.query.limit, 10)
+    const limit = Math.min(300, toPositiveInt(req.query.limit, 10))
     const sort = typeof req.query.sort === 'string' ? req.query.sort : '-createdAt'
     const categoryFilter = normalizeCategoryFilter(req.query.categories)
+    const archiveCategories = normalizeCategoryFilter(req.query.archiveCategories)
 
-    const where: Where = {}
-
-    if (categoryFilter.length > 0) {
-      where.categories = {
-        in: categoryFilter,
-      }
-    }
+    const categoryConditions = [categoryFilter, archiveCategories]
+      .filter(categories => categories.length > 0)
+      .map(categories => ({ categories: { in: categories } }))
+    const where: Where = categoryConditions.length > 0 ? { and: categoryConditions } : {}
 
     const result = await req.payload.find({
       collection: 'products',
+      req,
+      overrideAccess: false,
       depth: 0,
       sort,
       page,
       limit,
       where,
     })
+    const productsFinishedAt = Date.now()
 
     const mediaIDs = Array.from(
       new Set(
@@ -81,6 +83,8 @@ export const productList: PayloadHandler = async (req, res) => {
     if (mediaIDs.length > 0) {
       const mediaResult = await req.payload.find({
         collection: 'media',
+        req,
+        overrideAccess: false,
         depth: 0,
         limit: mediaIDs.length,
         where: {
@@ -102,6 +106,7 @@ export const productList: PayloadHandler = async (req, res) => {
         })
       })
     }
+    const mediaFinishedAt = Date.now()
 
     const docs = result.docs.map(doc => {
       const directImage: ProductListImage | null =
@@ -129,6 +134,7 @@ export const productList: PayloadHandler = async (req, res) => {
         slug: doc.slug,
         title: doc.title,
         createdAt: doc.createdAt,
+        publishedOn: doc.publishedOn,
         categories: Array.isArray(doc.categories)
           ? doc.categories.map(category => {
               return typeof category === 'string' ? category : String(category.id)
@@ -142,6 +148,13 @@ export const productList: PayloadHandler = async (req, res) => {
       }
     })
 
+    res.setHeader('Cache-Control', 'no-store')
+    res.setHeader(
+      'Server-Timing',
+      `products;dur=${productsFinishedAt - startedAt}, media;dur=${
+        mediaFinishedAt - productsFinishedAt
+      }, total;dur=${Date.now() - startedAt}`,
+    )
     res.status(200).json({
       docs,
       totalDocs: result.totalDocs,

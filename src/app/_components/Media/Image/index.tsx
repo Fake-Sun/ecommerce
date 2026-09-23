@@ -21,6 +21,7 @@ export const Image: React.FC<MediaProps> = props => {
     fill,
     src: srcFromProps,
     alt: altFromProps,
+    size,
   } = props
 
   const [isLoading, setIsLoading] = React.useState(true)
@@ -72,7 +73,7 @@ export const Image: React.FC<MediaProps> = props => {
       fill={fill}
       width={!fill ? width : undefined}
       height={!fill ? height : undefined}
-      sizes={sizes}
+      sizes={size || sizes}
       priority={priority}
     />
   )

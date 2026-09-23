@@ -20,6 +20,7 @@
     "generate:types": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts payload generate:types",
     "generate:graphQLSchema": "PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts payload generate:graphQLSchema",
     "lint": "eslint src",
+    "test:products": "node --test tests/product-archive.test.cjs",
     "lint:fix": "eslint --fix --ext .ts,.tsx src",
     "payload": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts payload",
     "serve:backend": "cross-env NODE_OPTIONS=--max_old_space_size=1024 PAYLOAD_CONFIG_PATH=dist/payload/payload.config.js NODE_ENV=production node dist/server.default.js"
@@ -62,6 +63,7 @@
     "@types/node": "18.11.3",
     "@types/qs": "^6.9.8",
     "@types/react": "18.0.21",
+    "@types/react-test-renderer": "^18",
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",
     "copyfiles": "^2.4.1",
@@ -75,6 +77,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "nodemon": "^2.0.6",
     "prettier": "^2.7.1",
+    "react-test-renderer": "18.2.0",
     "slate": "0.91.4",
     "ts-node": "10.9.1",
     "typescript": "^4.8.4"

@@ -51,6 +51,8 @@ export const ARCHIVE_BLOCK = `
         id
         slug
         title
+        createdAt
+        publishedOn
         priceJSON
         ${META}
       }
@@ -63,6 +65,8 @@ export const ARCHIVE_BLOCK = `
         id
         slug
         title
+        createdAt
+        publishedOn
         priceJSON
         ${PRODUCT_CATEGORIES}
         ${META}
